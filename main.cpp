@@ -2335,6 +2335,588 @@ void drawVillagePineTrees()
 }
 
 
+// OBJECT ID: OBJ_VILLAGE_01
+// Object: Traditional Mud House
+// Created by: Roni
+
+void drawMudHouse()
+{
+    // Main mud wall
+    glColor3f(0.64f, 0.42f, 0.23f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1030, 250);
+        glVertex2f(1180, 250);
+        glVertex2f(1180, 350);
+        glVertex2f(1030, 350);
+
+    glEnd();
+
+    // Main roof
+    glColor3f(0.40f, 0.22f, 0.10f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(1010, 350);
+        glVertex2f(1105, 425);
+        glVertex2f(1200, 350);
+
+    glEnd();
+
+
+    // Roof lower edge
+    glColor3f(0.30f, 0.16f, 0.08f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1015, 345);
+        glVertex2f(1195, 345);
+        glVertex2f(1190, 355);
+        glVertex2f(1020, 355);
+
+    glEnd();
+
+
+    // Main door
+    glColor3f(0.28f, 0.15f, 0.07f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1085, 250);
+        glVertex2f(1125, 250);
+        glVertex2f(1125, 320);
+        glVertex2f(1085, 320);
+
+    glEnd();
+
+
+    // Door inner panel
+    glColor3f(0.38f, 0.22f, 0.10f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1091, 258);
+        glVertex2f(1119, 258);
+        glVertex2f(1119, 312);
+        glVertex2f(1091, 312);
+
+    glEnd();
+
+
+    // Door handle
+    glColor3f(0.90f, 0.72f, 0.20f);
+    drawCircle(1113, 284, 3);
+
+
+    // Left window
+    glColor3f(0.18f, 0.28f, 0.24f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1045, 285);
+        glVertex2f(1075, 285);
+        glVertex2f(1075, 315);
+        glVertex2f(1045, 315);
+
+    glEnd();
+
+
+    // Right window
+    glBegin(GL_QUADS);
+
+        glVertex2f(1135, 285);
+        glVertex2f(1160, 285);
+        glVertex2f(1160, 315);
+        glVertex2f(1135, 315);
+
+    glEnd();
+
+
+    // Window frames
+    glColor3f(0.72f, 0.52f, 0.27f);
+
+    glBegin(GL_LINES);
+
+        // Left
+        glVertex2f(1060, 285);
+        glVertex2f(1060, 315);
+
+        glVertex2f(1045, 300);
+        glVertex2f(1075, 300);
+
+        // Right
+        glVertex2f(1147, 285);
+        glVertex2f(1147, 315);
+
+        glVertex2f(1135, 300);
+        glVertex2f(1160, 300);
+
+    glEnd();
+
+
+    // Bottom base
+    glColor3f(0.42f, 0.28f, 0.14f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1025, 245);
+        glVertex2f(1185, 245);
+        glVertex2f(1185, 253);
+        glVertex2f(1025, 253);
+
+    glEnd();
+}
+
+
+
+// OBJECT ID: OBJ_VILLAGE_02
+// Object: Traditional Tin House
+// Created by: Roni
+
+void drawTinHouse()
+{
+    // Main wall
+    glColor3f(0.70f, 0.76f, 0.72f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1230, 250);
+        glVertex2f(1380, 250);
+        glVertex2f(1380, 345);
+        glVertex2f(1230, 345);
+
+    glEnd();
+
+    // Tin roof
+    glColor3f(0.40f, 0.48f, 0.52f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1210, 345);
+        glVertex2f(1400, 345);
+        glVertex2f(1370, 390);
+        glVertex2f(1240, 390);
+
+    glEnd();
+
+
+    // Roof light strip
+    glColor3f(0.62f, 0.70f, 0.72f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1225, 352);
+        glVertex2f(1385, 352);
+        glVertex2f(1378, 360);
+        glVertex2f(1232, 360);
+
+    glEnd();
+
+
+    // Main door
+    glColor3f(0.32f, 0.22f, 0.14f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1285, 250);
+        glVertex2f(1325, 250);
+        glVertex2f(1325, 315);
+        glVertex2f(1285, 315);
+
+    glEnd();
+
+
+    // Door inner shade
+    glColor3f(0.42f, 0.30f, 0.18f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1291, 258);
+        glVertex2f(1319, 258);
+        glVertex2f(1319, 307);
+        glVertex2f(1291, 307);
+
+    glEnd();
+
+
+    // Door handle
+    glColor3f(0.90f, 0.72f, 0.20f);
+    drawCircle(1313, 282, 3);
+
+
+    // Left window
+    glColor3f(0.20f, 0.38f, 0.42f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1245, 285);
+        glVertex2f(1272, 285);
+        glVertex2f(1272, 315);
+        glVertex2f(1245, 315);
+
+    glEnd();
+
+
+    // Right window
+    glBegin(GL_QUADS);
+
+        glVertex2f(1335, 285);
+        glVertex2f(1362, 285);
+        glVertex2f(1362, 315);
+        glVertex2f(1335, 315);
+
+    glEnd();
+
+
+    // Window frames
+    glColor3f(0.80f, 0.86f, 0.84f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(1258, 285);
+        glVertex2f(1258, 315);
+
+        glVertex2f(1245, 300);
+        glVertex2f(1272, 300);
+
+
+        glVertex2f(1348, 285);
+        glVertex2f(1348, 315);
+
+        glVertex2f(1335, 300);
+        glVertex2f(1362, 300);
+
+    glEnd();
+
+
+    // Bottom base
+    glColor3f(0.45f, 0.46f, 0.42f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1225, 245);
+        glVertex2f(1385, 245);
+        glVertex2f(1385, 253);
+        glVertex2f(1225, 253);
+
+    glEnd();
+}
+
+
+// OBJECT ID: OBJ_VILLAGE_03
+// Object: Traditional Windmill
+// Created by: Roni
+
+void drawWindmill()
+{
+    // Tower
+    glColor3f(0.58f, 0.42f, 0.25f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1160, 250);
+        glVertex2f(1200, 250);
+        glVertex2f(1190, 400);
+        glVertex2f(1170, 400);
+
+    glEnd();
+
+
+    // Top cap
+    glColor3f(0.35f, 0.20f, 0.10f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(1155, 400);
+        glVertex2f(1180, 435);
+        glVertex2f(1205, 400);
+
+    glEnd();
+
+
+    // Center hub
+    glColor3f(0.25f, 0.25f, 0.25f);
+    drawCircle(1180, 400, 10);
+
+
+    // Blade 1 (Vertical)
+    glLineWidth(4);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(1180, 400);
+        glVertex2f(1180, 480);
+
+        glVertex2f(1180, 400);
+        glVertex2f(1180, 320);
+
+    glEnd();
+
+
+    // Blade 2 (Horizontal)
+
+    glBegin(GL_LINES);
+
+        glVertex2f(1100, 400);
+        glVertex2f(1180, 400);
+
+        glVertex2f(1180, 400);
+        glVertex2f(1260, 400);
+
+    glEnd();
+
+
+    // Blade decorations
+    glColor3f(0.88f, 0.88f, 0.82f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(1180, 480);
+        glVertex2f(1168, 450);
+        glVertex2f(1192, 450);
+
+        glVertex2f(1180, 320);
+        glVertex2f(1168, 350);
+        glVertex2f(1192, 350);
+
+        glVertex2f(1100, 400);
+        glVertex2f(1130, 388);
+        glVertex2f(1130, 412);
+
+        glVertex2f(1260, 400);
+        glVertex2f(1230, 388);
+        glVertex2f(1230, 412);
+
+    glEnd();
+}
+
+// Draw one large village tree
+// Created by: Roni
+void drawVillageTree(float x, float y, float s)
+{
+    // Main trunk
+    glColor3f(0.38f, 0.22f, 0.10f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x - 10 * s, y);
+        glVertex2f(x + 10 * s, y);
+        glVertex2f(x + 7 * s, y + 95 * s);
+        glVertex2f(x - 7 * s, y + 95 * s);
+    glEnd();
+
+    // Left branch
+    glBegin(GL_QUADS);
+        glVertex2f(x - 5 * s, y + 65 * s);
+        glVertex2f(x + 2 * s, y + 70 * s);
+        glVertex2f(x - 30 * s, y + 115 * s);
+        glVertex2f(x - 37 * s, y + 110 * s);
+    glEnd();
+
+    // Right branch
+    glBegin(GL_QUADS);
+        glVertex2f(x - 2 * s, y + 70 * s);
+        glVertex2f(x + 6 * s, y + 65 * s);
+        glVertex2f(x + 38 * s, y + 108 * s);
+        glVertex2f(x + 30 * s, y + 115 * s);
+    glEnd();
+
+    // Dark leaves
+    glColor3f(0.08f, 0.32f, 0.10f);
+
+    drawCircle(x - 42 * s, y + 125 * s, 35 * s);
+    drawCircle(x + 42 * s, y + 125 * s, 35 * s);
+    drawCircle(x, y + 150 * s, 42 * s);
+
+    // Main leaves
+    glColor3f(0.10f, 0.42f, 0.12f);
+
+    drawCircle(x - 25 * s, y + 150 * s, 42 * s);
+    drawCircle(x + 27 * s, y + 150 * s, 42 * s);
+    drawCircle(x, y + 175 * s, 38 * s);
+
+    // Light leaves
+    glColor3f(0.16f, 0.50f, 0.16f);
+
+    drawCircle(x - 18 * s, y + 180 * s, 27 * s);
+    drawCircle(x + 22 * s, y + 178 * s, 28 * s);
+
+    // Roots
+    glColor3f(0.32f, 0.18f, 0.08f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(x - 5 * s, y + 5 * s);
+        glVertex2f(x - 30 * s, y);
+        glVertex2f(x, y);
+
+        glVertex2f(x + 5 * s, y + 5 * s);
+        glVertex2f(x + 30 * s, y);
+        glVertex2f(x, y);
+
+    glEnd();
+}
+
+
+// OBJECT ID: OBJ_VILLAGE_04
+// Object: Large Village Trees
+// Created by: Roni
+
+void drawLargeVillageTrees()
+{
+    drawVillageTree(970, 250, 0.72f);
+
+    drawVillageTree(1435, 250, 0.82f);
+
+    drawVillageTree(1570, 250, 0.68f);
+}
+
+// OBJECT ID: OBJ_VILLAGE_05
+// Object: Village Cows
+// Created by: Roni
+
+void drawCow(float x, float y, float s)
+{
+    // Body
+    glColor3f(0.92f, 0.88f, 0.76f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + 95 * s, y);
+        glVertex2f(x + 95 * s, y + 50 * s);
+        glVertex2f(x, y + 50 * s);
+    glEnd();
+
+    drawCircle(x + 5 * s, y + 25 * s, 25 * s);
+    drawCircle(x + 90 * s, y + 25 * s, 25 * s);
+
+    // Head
+    glColor3f(0.82f, 0.72f, 0.56f);
+    drawCircle(x + 115 * s, y + 35 * s, 27 * s);
+
+    // Face
+    glColor3f(0.90f, 0.82f, 0.68f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 105 * s, y + 15 * s);
+        glVertex2f(x + 135 * s, y + 15 * s);
+        glVertex2f(x + 135 * s, y + 38 * s);
+        glVertex2f(x + 105 * s, y + 38 * s);
+    glEnd();
+
+    // Ears
+    glColor3f(0.55f, 0.38f, 0.22f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(x + 103 * s, y + 48 * s);
+        glVertex2f(x + 85 * s, y + 58 * s);
+        glVertex2f(x + 106 * s, y + 38 * s);
+
+        glVertex2f(x + 127 * s, y + 48 * s);
+        glVertex2f(x + 145 * s, y + 58 * s);
+        glVertex2f(x + 124 * s, y + 38 * s);
+    glEnd();
+
+    // Horns
+    glColor3f(0.88f, 0.78f, 0.52f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(x + 105 * s, y + 52 * s);
+        glVertex2f(x + 100 * s, y + 70 * s);
+        glVertex2f(x + 112 * s, y + 52 * s);
+
+        glVertex2f(x + 120 * s, y + 52 * s);
+        glVertex2f(x + 128 * s, y + 70 * s);
+        glVertex2f(x + 128 * s, y + 50 * s);
+    glEnd();
+
+    // Body spots
+    glColor3f(0.25f, 0.20f, 0.16f);
+
+    drawCircle(x + 25 * s, y + 32 * s, 14 * s);
+    drawCircle(x + 65 * s, y + 18 * s, 12 * s);
+
+    // Legs
+    glColor3f(0.72f, 0.62f, 0.48f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 10 * s, y);
+        glVertex2f(x + 22 * s, y);
+        glVertex2f(x + 22 * s, y - 40 * s);
+        glVertex2f(x + 10 * s, y - 40 * s);
+
+        glVertex2f(x + 32 * s, y);
+        glVertex2f(x + 44 * s, y);
+        glVertex2f(x + 44 * s, y - 40 * s);
+        glVertex2f(x + 32 * s, y - 40 * s);
+
+        glVertex2f(x + 65 * s, y);
+        glVertex2f(x + 77 * s, y);
+        glVertex2f(x + 77 * s, y - 40 * s);
+        glVertex2f(x + 65 * s, y - 40 * s);
+
+        glVertex2f(x + 83 * s, y);
+        glVertex2f(x + 95 * s, y);
+        glVertex2f(x + 95 * s, y - 40 * s);
+        glVertex2f(x + 83 * s, y - 40 * s);
+    glEnd();
+
+    // Hooves
+    glColor3f(0.20f, 0.16f, 0.12f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 8 * s, y - 42 * s);
+        glVertex2f(x + 24 * s, y - 42 * s);
+        glVertex2f(x + 24 * s, y - 35 * s);
+        glVertex2f(x + 8 * s, y - 35 * s);
+
+        glVertex2f(x + 30 * s, y - 42 * s);
+        glVertex2f(x + 46 * s, y - 42 * s);
+        glVertex2f(x + 46 * s, y - 35 * s);
+        glVertex2f(x + 30 * s, y - 35 * s);
+
+        glVertex2f(x + 63 * s, y - 42 * s);
+        glVertex2f(x + 79 * s, y - 42 * s);
+        glVertex2f(x + 79 * s, y - 35 * s);
+        glVertex2f(x + 63 * s, y - 35 * s);
+
+        glVertex2f(x + 81 * s, y - 42 * s);
+        glVertex2f(x + 97 * s, y - 42 * s);
+        glVertex2f(x + 97 * s, y - 35 * s);
+        glVertex2f(x + 81 * s, y - 35 * s);
+    glEnd();
+
+    // Eye
+    glColor3f(0.05f, 0.05f, 0.05f);
+    drawCircle(x + 123 * s, y + 42 * s, 3 * s);
+
+    // Nose
+    drawCircle(x + 125 * s, y + 23 * s, 2.5f * s);
+
+    // Tail
+    glLineWidth(3);
+
+    glBegin(GL_LINES);
+        glVertex2f(x - 5 * s, y + 38 * s);
+        glVertex2f(x - 25 * s, y + 8 * s);
+    glEnd();
+
+    drawCircle(x - 25 * s, y + 6 * s, 5 * s);
+
+    glLineWidth(1);
+}
+
+void drawVillageCows()
+{
+
+    drawCow(970, 190, 0.45f);
+
+    drawCow(1360, 190, 0.52f);
+
+    drawCow(1490, 188, 0.42f);
+}
+
+
 // DISPLAY FUNCTION
 
 void display()
@@ -2350,6 +2932,16 @@ void display()
     drawVillageHills();
     drawVillageBackgroundTrees();
     drawVillagePineTrees();
+
+    drawLargeVillageTrees();
+
+    // Foreground village object
+    drawWindmill();
+
+    drawMudHouse();
+    drawTinHouse();
+
+    drawVillageCows();
 
     // River
     drawRiver();
@@ -2432,4 +3024,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
