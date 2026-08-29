@@ -2,6 +2,66 @@
 #include <GL/glut.h>
 #include <cmath>
 
+float cloudMove = 0.0f;
+float windmillAngle = 0.0f;
+
+float backgroundRainMove = 0.0f;
+float foregroundRainMove = 0.0f;;
+
+int sceneMode = 0;
+
+// 0 = Day
+// 1 = Evening
+// 2 = Night
+// 3 = Rain
+
+// FUNCTION ID: FUNC_ANIM_01
+// Function: Cloud Movement Animation
+
+void updateCloud(int value)
+{
+    cloudMove += 1.0f;
+
+    if (cloudMove > 1600)
+        cloudMove = -400;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateCloud, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_02
+// Function: Rain Animation
+// Created by: Ashik
+void updateRain(int value)
+{
+    backgroundRainMove += 18.0f;
+    foregroundRainMove += 22.0f;
+
+    if (backgroundRainMove > 900)
+        backgroundRainMove = 0;
+
+    if (foregroundRainMove > 900)
+        foregroundRainMove = 0;
+
+    glutPostRedisplay();
+    glutTimerFunc(25, updateRain, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_02
+// Function: Windmill Rotation Animation
+
+void updateWindmill(int value)
+{
+    windmillAngle += 2.0f;
+
+    if (windmillAngle >= 360.0f)
+        windmillAngle = 0.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateWindmill, 0);
+}
+
+
 // HELPER FUNCTION: Draw Circle
 
 void drawCircle(float centerX, float centerY, float radius)
@@ -31,19 +91,202 @@ void drawCircle(float centerX, float centerY, float radius)
 
 void drawSky()
 {
-    glColor3f(0.53f, 0.81f, 0.98f);
+    if (sceneMode == 0)
+    {
+        glColor3f(0.45f, 0.78f, 0.95f);
+    }
+    else if (sceneMode == 1)
+    {
+        glColor3f(0.95f, 0.48f, 0.28f);
+    }
+    else if (sceneMode == 2)
+    {
+        glColor3f(0.05f, 0.08f, 0.20f);
+    }
+    else
+    {
+        // Rain sky
+        glColor3f(0.25f, 0.31f, 0.37f);
+    }
 
     glBegin(GL_QUADS);
-
-        glVertex2f(0, 250);
-        glVertex2f(1600, 250);
+        glVertex2f(0, 205);
+        glVertex2f(1600, 205);
         glVertex2f(1600, 700);
         glVertex2f(0, 700);
-
     glEnd();
 }
 
+// FUNCTION ID: FUNC_INT_01
+// Function: Day Evening Night Control
+// Created by: Ashik
 
+void keyboard(unsigned char key, int x, int y)
+{
+    if (key == 'd' || key == 'D')
+    {
+        sceneMode = 0;
+    }
+    else if (key == 'e' || key == 'E')
+    {
+        sceneMode = 1;
+    }
+    else if (key == 'n' || key == 'N')
+    {
+        sceneMode = 2;
+    }
+    else if (key == 'r' || key == 'R')
+    {
+        sceneMode = 3;
+    }
+
+    glutPostRedisplay();
+}
+
+// FUNCTION ID: FUNC_ANIM_02
+// Function: Heavy Rain Animation
+// Created by: Ashik
+
+// Heavy rain behind all objects
+void drawBackgroundRain()
+{
+    if (sceneMode != 3)
+        return;
+
+    glColor3f(0.72f, 0.80f, 0.88f);
+    glLineWidth(1.0f);
+
+    glBegin(GL_LINES);
+
+    // First dense layer
+    for (int x = 0; x <= 1600; x += 10)
+    {
+        float y = 700 - ((x * 7 + (int)backgroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 6, y - 20);
+    }
+
+    // Second dense layer
+    for (int x = 5; x <= 1600; x += 12)
+    {
+        float y = 700 - ((x * 11 + 300 + (int)backgroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 5, y - 18);
+    }
+
+    // Third layer
+    for (int x = 8; x <= 1600; x += 16)
+    {
+        float y = 700 - ((x * 5 + 550 + (int)backgroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 7, y - 22);
+    }
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+
+// Light rain in front of all objects
+void drawForegroundRain()
+{
+    if (sceneMode != 3)
+        return;
+
+    glColor3f(0.88f, 0.93f, 1.0f);
+    glLineWidth(1.4f);
+
+    glBegin(GL_LINES);
+
+    for (int x = 20; x <= 1600; x += 60)
+    {
+        float y = 700 - ((x * 5 + (int)foregroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 10, y - 35);
+    }
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+
+void drawMoon()
+{
+    glColor3f(0.95f, 0.95f, 0.80f);
+    drawCircle(1450, 600, 38);
+}
+
+void drawStars()
+{
+    if (sceneMode != 2)
+        return;
+
+    // Small stars
+    glColor3f(0.92f, 0.95f, 1.0f);
+    glPointSize(2.0f);
+
+    glBegin(GL_POINTS);
+        glVertex2f(90, 640);
+        glVertex2f(160, 570);
+        glVertex2f(245, 620);
+        glVertex2f(330, 550);
+        glVertex2f(420, 655);
+        glVertex2f(510, 585);
+        glVertex2f(600, 635);
+        glVertex2f(690, 545);
+        glVertex2f(790, 610);
+        glVertex2f(880, 660);
+        glVertex2f(970, 565);
+        glVertex2f(1060, 630);
+        glVertex2f(1160, 550);
+        glVertex2f(1250, 650);
+        glVertex2f(1340, 585);
+        glVertex2f(1530, 625);
+    glEnd();
+
+    // Medium stars
+    glColor3f(1.0f, 0.96f, 0.72f);
+    glPointSize(4.0f);
+
+    glBegin(GL_POINTS);
+        glVertex2f(210, 660);
+        glVertex2f(470, 620);
+        glVertex2f(740, 655);
+        glVertex2f(1010, 600);
+        glVertex2f(1210, 670);
+        glVertex2f(1490, 560);
+    glEnd();
+
+    // Bright cross stars
+    glColor3f(1.0f, 1.0f, 0.90f);
+    glLineWidth(1.5f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(365, 610);
+        glVertex2f(365, 626);
+        glVertex2f(357, 618);
+        glVertex2f(373, 618);
+
+        glVertex2f(920, 625);
+        glVertex2f(920, 643);
+        glVertex2f(911, 634);
+        glVertex2f(929, 634);
+
+        glVertex2f(1380, 635);
+        glVertex2f(1380, 653);
+        glVertex2f(1371, 644);
+        glVertex2f(1389, 644);
+
+    glEnd();
+
+    glPointSize(1.0f);
+    glLineWidth(1.0f);
+}
 
 // OBJECT ID: OBJ_BASE_02
 // Object: Ground
@@ -84,12 +327,29 @@ void drawSun()
 
 void drawCloud(float x, float y)
 {
-    glColor3f(1.0f, 1.0f, 1.0f);
+    if (sceneMode == 3)
+    {
+        // Rain cloud
+        glColor3f(0.50f, 0.54f, 0.58f);
+    }
+    else if (sceneMode == 2)
+    {
+        // Night cloud
+        glColor3f(0.75f, 0.78f, 0.82f);
+    }
+    else
+    {
+        // Day and Evening cloud
+        glColor3f(1.0f, 1.0f, 1.0f);
+    }
+
 
     drawCircle(x, y, 25);
     drawCircle(x + 25, y + 10, 30);
     drawCircle(x + 55, y + 5, 27);
     drawCircle(x + 80, y, 23);
+
+
 }
 
 
@@ -2335,6 +2595,861 @@ void drawVillagePineTrees()
 }
 
 
+// OBJECT ID: OBJ_VILLAGE_01
+// Object: Traditional Mud House
+// Created by: Roni
+
+void drawMudHouse()
+{
+    // Main mud wall
+    glColor3f(0.64f, 0.42f, 0.23f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1030, 250);
+        glVertex2f(1180, 250);
+        glVertex2f(1180, 350);
+        glVertex2f(1030, 350);
+
+    glEnd();
+
+    // Main roof
+    glColor3f(0.40f, 0.22f, 0.10f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(1010, 350);
+        glVertex2f(1105, 425);
+        glVertex2f(1200, 350);
+
+    glEnd();
+
+
+    // Roof lower edge
+    glColor3f(0.30f, 0.16f, 0.08f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1015, 345);
+        glVertex2f(1195, 345);
+        glVertex2f(1190, 355);
+        glVertex2f(1020, 355);
+
+    glEnd();
+
+
+    // Main door
+    glColor3f(0.28f, 0.15f, 0.07f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1085, 250);
+        glVertex2f(1125, 250);
+        glVertex2f(1125, 320);
+        glVertex2f(1085, 320);
+
+    glEnd();
+
+
+    // Door inner panel
+    glColor3f(0.38f, 0.22f, 0.10f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1091, 258);
+        glVertex2f(1119, 258);
+        glVertex2f(1119, 312);
+        glVertex2f(1091, 312);
+
+    glEnd();
+
+
+    // Door handle
+    glColor3f(0.90f, 0.72f, 0.20f);
+    drawCircle(1113, 284, 3);
+
+
+    // Left window
+    glColor3f(0.18f, 0.28f, 0.24f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1045, 285);
+        glVertex2f(1075, 285);
+        glVertex2f(1075, 315);
+        glVertex2f(1045, 315);
+
+    glEnd();
+
+
+    // Right window
+    glBegin(GL_QUADS);
+
+        glVertex2f(1135, 285);
+        glVertex2f(1160, 285);
+        glVertex2f(1160, 315);
+        glVertex2f(1135, 315);
+
+    glEnd();
+
+
+    // Window frames
+    glColor3f(0.72f, 0.52f, 0.27f);
+
+    glBegin(GL_LINES);
+
+        // Left
+        glVertex2f(1060, 285);
+        glVertex2f(1060, 315);
+
+        glVertex2f(1045, 300);
+        glVertex2f(1075, 300);
+
+        // Right
+        glVertex2f(1147, 285);
+        glVertex2f(1147, 315);
+
+        glVertex2f(1135, 300);
+        glVertex2f(1160, 300);
+
+    glEnd();
+
+
+    // Bottom base
+    glColor3f(0.42f, 0.28f, 0.14f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1025, 245);
+        glVertex2f(1185, 245);
+        glVertex2f(1185, 253);
+        glVertex2f(1025, 253);
+
+    glEnd();
+}
+
+
+
+// OBJECT ID: OBJ_VILLAGE_02
+// Object: Traditional Tin House
+// Created by: Roni
+
+void drawTinHouse()
+{
+    // Main wall
+    glColor3f(0.70f, 0.76f, 0.72f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1230, 250);
+        glVertex2f(1380, 250);
+        glVertex2f(1380, 345);
+        glVertex2f(1230, 345);
+
+    glEnd();
+
+    // Tin roof
+    glColor3f(0.40f, 0.48f, 0.52f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1210, 345);
+        glVertex2f(1400, 345);
+        glVertex2f(1370, 390);
+        glVertex2f(1240, 390);
+
+    glEnd();
+
+
+    // Roof light strip
+    glColor3f(0.62f, 0.70f, 0.72f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1225, 352);
+        glVertex2f(1385, 352);
+        glVertex2f(1378, 360);
+        glVertex2f(1232, 360);
+
+    glEnd();
+
+
+    // Main door
+    glColor3f(0.32f, 0.22f, 0.14f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1285, 250);
+        glVertex2f(1325, 250);
+        glVertex2f(1325, 315);
+        glVertex2f(1285, 315);
+
+    glEnd();
+
+
+    // Door inner shade
+    glColor3f(0.42f, 0.30f, 0.18f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1291, 258);
+        glVertex2f(1319, 258);
+        glVertex2f(1319, 307);
+        glVertex2f(1291, 307);
+
+    glEnd();
+
+
+    // Door handle
+    glColor3f(0.90f, 0.72f, 0.20f);
+    drawCircle(1313, 282, 3);
+
+
+    // Left window
+    glColor3f(0.20f, 0.38f, 0.42f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1245, 285);
+        glVertex2f(1272, 285);
+        glVertex2f(1272, 315);
+        glVertex2f(1245, 315);
+
+    glEnd();
+
+
+    // Right window
+    glBegin(GL_QUADS);
+
+        glVertex2f(1335, 285);
+        glVertex2f(1362, 285);
+        glVertex2f(1362, 315);
+        glVertex2f(1335, 315);
+
+    glEnd();
+
+
+    // Window frames
+    glColor3f(0.80f, 0.86f, 0.84f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(1258, 285);
+        glVertex2f(1258, 315);
+
+        glVertex2f(1245, 300);
+        glVertex2f(1272, 300);
+
+
+        glVertex2f(1348, 285);
+        glVertex2f(1348, 315);
+
+        glVertex2f(1335, 300);
+        glVertex2f(1362, 300);
+
+    glEnd();
+
+
+    // Bottom base
+    glColor3f(0.45f, 0.46f, 0.42f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1225, 245);
+        glVertex2f(1385, 245);
+        glVertex2f(1385, 253);
+        glVertex2f(1225, 253);
+
+    glEnd();
+}
+
+
+// OBJECT ID: OBJ_VILLAGE_03
+// Object: Traditional Windmill
+// Created by: Roni
+
+void drawWindmill()
+{
+    // Tower
+    glColor3f(0.58f, 0.42f, 0.25f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(1160, 250);
+        glVertex2f(1200, 250);
+        glVertex2f(1190, 400);
+        glVertex2f(1170, 400);
+
+    glEnd();
+
+
+    // Top cap
+    glColor3f(0.35f, 0.20f, 0.10f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(1155, 400);
+        glVertex2f(1180, 435);
+        glVertex2f(1205, 400);
+
+    glEnd();
+
+
+    // Center hub
+    glColor3f(0.25f, 0.25f, 0.25f);
+    drawCircle(1180, 400, 10);
+
+
+    glPushMatrix();
+
+    glTranslatef(1180, 400, 0);
+    glRotatef(windmillAngle, 0, 0, 1);
+    glTranslatef(-1180, -400, 0);
+
+    // Blade 1 (Vertical)
+    glLineWidth(4);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(1180, 400);
+        glVertex2f(1180, 480);
+
+        glVertex2f(1180, 400);
+        glVertex2f(1180, 320);
+
+    glEnd();
+
+
+    // Blade 2 (Horizontal)
+
+    glBegin(GL_LINES);
+
+        glVertex2f(1100, 400);
+        glVertex2f(1180, 400);
+
+        glVertex2f(1180, 400);
+        glVertex2f(1260, 400);
+
+    glEnd();
+
+
+    // Blade decorations
+    glColor3f(0.88f, 0.88f, 0.82f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(1180, 480);
+        glVertex2f(1168, 450);
+        glVertex2f(1192, 450);
+
+        glVertex2f(1180, 320);
+        glVertex2f(1168, 350);
+        glVertex2f(1192, 350);
+
+        glVertex2f(1100, 400);
+        glVertex2f(1130, 388);
+        glVertex2f(1130, 412);
+
+        glVertex2f(1260, 400);
+        glVertex2f(1230, 388);
+        glVertex2f(1230, 412);
+
+    glEnd();
+    glPopMatrix();
+}
+
+// Draw one large village tree
+// Created by: Roni
+void drawVillageTree(float x, float y, float s)
+{
+    // Main trunk
+    glColor3f(0.38f, 0.22f, 0.10f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x - 10 * s, y);
+        glVertex2f(x + 10 * s, y);
+        glVertex2f(x + 7 * s, y + 95 * s);
+        glVertex2f(x - 7 * s, y + 95 * s);
+    glEnd();
+
+    // Left branch
+    glBegin(GL_QUADS);
+        glVertex2f(x - 5 * s, y + 65 * s);
+        glVertex2f(x + 2 * s, y + 70 * s);
+        glVertex2f(x - 30 * s, y + 115 * s);
+        glVertex2f(x - 37 * s, y + 110 * s);
+    glEnd();
+
+    // Right branch
+    glBegin(GL_QUADS);
+        glVertex2f(x - 2 * s, y + 70 * s);
+        glVertex2f(x + 6 * s, y + 65 * s);
+        glVertex2f(x + 38 * s, y + 108 * s);
+        glVertex2f(x + 30 * s, y + 115 * s);
+    glEnd();
+
+    // Dark leaves
+    glColor3f(0.08f, 0.32f, 0.10f);
+
+    drawCircle(x - 42 * s, y + 125 * s, 35 * s);
+    drawCircle(x + 42 * s, y + 125 * s, 35 * s);
+    drawCircle(x, y + 150 * s, 42 * s);
+
+    // Main leaves
+    glColor3f(0.10f, 0.42f, 0.12f);
+
+    drawCircle(x - 25 * s, y + 150 * s, 42 * s);
+    drawCircle(x + 27 * s, y + 150 * s, 42 * s);
+    drawCircle(x, y + 175 * s, 38 * s);
+
+    // Light leaves
+    glColor3f(0.16f, 0.50f, 0.16f);
+
+    drawCircle(x - 18 * s, y + 180 * s, 27 * s);
+    drawCircle(x + 22 * s, y + 178 * s, 28 * s);
+
+    // Roots
+    glColor3f(0.32f, 0.18f, 0.08f);
+
+    glBegin(GL_TRIANGLES);
+
+        glVertex2f(x - 5 * s, y + 5 * s);
+        glVertex2f(x - 30 * s, y);
+        glVertex2f(x, y);
+
+        glVertex2f(x + 5 * s, y + 5 * s);
+        glVertex2f(x + 30 * s, y);
+        glVertex2f(x, y);
+
+    glEnd();
+}
+
+
+// OBJECT ID: OBJ_VILLAGE_04
+// Object: Large Village Trees
+// Created by: Roni
+
+void drawLargeVillageTrees()
+{
+    drawVillageTree(970, 250, 0.72f);
+
+    drawVillageTree(1435, 250, 0.82f);
+
+    drawVillageTree(1570, 250, 0.68f);
+}
+
+// OBJECT ID: OBJ_VILLAGE_05
+// Object: Village Cows
+// Created by: Roni
+
+void drawCow(float x, float y, float s)
+{
+    // Body
+    glColor3f(0.92f, 0.88f, 0.76f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + 95 * s, y);
+        glVertex2f(x + 95 * s, y + 50 * s);
+        glVertex2f(x, y + 50 * s);
+    glEnd();
+
+    drawCircle(x + 5 * s, y + 25 * s, 25 * s);
+    drawCircle(x + 90 * s, y + 25 * s, 25 * s);
+
+    // Head
+    glColor3f(0.82f, 0.72f, 0.56f);
+    drawCircle(x + 115 * s, y + 35 * s, 27 * s);
+
+    // Face
+    glColor3f(0.90f, 0.82f, 0.68f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 105 * s, y + 15 * s);
+        glVertex2f(x + 135 * s, y + 15 * s);
+        glVertex2f(x + 135 * s, y + 38 * s);
+        glVertex2f(x + 105 * s, y + 38 * s);
+    glEnd();
+
+    // Ears
+    glColor3f(0.55f, 0.38f, 0.22f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(x + 103 * s, y + 48 * s);
+        glVertex2f(x + 85 * s, y + 58 * s);
+        glVertex2f(x + 106 * s, y + 38 * s);
+
+        glVertex2f(x + 127 * s, y + 48 * s);
+        glVertex2f(x + 145 * s, y + 58 * s);
+        glVertex2f(x + 124 * s, y + 38 * s);
+    glEnd();
+
+    // Horns
+    glColor3f(0.88f, 0.78f, 0.52f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(x + 105 * s, y + 52 * s);
+        glVertex2f(x + 100 * s, y + 70 * s);
+        glVertex2f(x + 112 * s, y + 52 * s);
+
+        glVertex2f(x + 120 * s, y + 52 * s);
+        glVertex2f(x + 128 * s, y + 70 * s);
+        glVertex2f(x + 128 * s, y + 50 * s);
+    glEnd();
+
+    // Body spots
+    glColor3f(0.25f, 0.20f, 0.16f);
+
+    drawCircle(x + 25 * s, y + 32 * s, 14 * s);
+    drawCircle(x + 65 * s, y + 18 * s, 12 * s);
+
+    // Legs
+    glColor3f(0.72f, 0.62f, 0.48f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 10 * s, y);
+        glVertex2f(x + 22 * s, y);
+        glVertex2f(x + 22 * s, y - 40 * s);
+        glVertex2f(x + 10 * s, y - 40 * s);
+
+        glVertex2f(x + 32 * s, y);
+        glVertex2f(x + 44 * s, y);
+        glVertex2f(x + 44 * s, y - 40 * s);
+        glVertex2f(x + 32 * s, y - 40 * s);
+
+        glVertex2f(x + 65 * s, y);
+        glVertex2f(x + 77 * s, y);
+        glVertex2f(x + 77 * s, y - 40 * s);
+        glVertex2f(x + 65 * s, y - 40 * s);
+
+        glVertex2f(x + 83 * s, y);
+        glVertex2f(x + 95 * s, y);
+        glVertex2f(x + 95 * s, y - 40 * s);
+        glVertex2f(x + 83 * s, y - 40 * s);
+    glEnd();
+
+    // Hooves
+    glColor3f(0.20f, 0.16f, 0.12f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 8 * s, y - 42 * s);
+        glVertex2f(x + 24 * s, y - 42 * s);
+        glVertex2f(x + 24 * s, y - 35 * s);
+        glVertex2f(x + 8 * s, y - 35 * s);
+
+        glVertex2f(x + 30 * s, y - 42 * s);
+        glVertex2f(x + 46 * s, y - 42 * s);
+        glVertex2f(x + 46 * s, y - 35 * s);
+        glVertex2f(x + 30 * s, y - 35 * s);
+
+        glVertex2f(x + 63 * s, y - 42 * s);
+        glVertex2f(x + 79 * s, y - 42 * s);
+        glVertex2f(x + 79 * s, y - 35 * s);
+        glVertex2f(x + 63 * s, y - 35 * s);
+
+        glVertex2f(x + 81 * s, y - 42 * s);
+        glVertex2f(x + 97 * s, y - 42 * s);
+        glVertex2f(x + 97 * s, y - 35 * s);
+        glVertex2f(x + 81 * s, y - 35 * s);
+    glEnd();
+
+    // Eye
+    glColor3f(0.05f, 0.05f, 0.05f);
+    drawCircle(x + 123 * s, y + 42 * s, 3 * s);
+
+    // Nose
+    drawCircle(x + 125 * s, y + 23 * s, 2.5f * s);
+
+    // Tail
+    glLineWidth(3);
+
+    glBegin(GL_LINES);
+        glVertex2f(x - 5 * s, y + 38 * s);
+        glVertex2f(x - 25 * s, y + 8 * s);
+    glEnd();
+
+    drawCircle(x - 25 * s, y + 6 * s, 5 * s);
+
+    glLineWidth(1);
+}
+
+void drawVillageCows()
+{
+
+    drawCow(970, 190, 0.45f);
+
+    drawCow(1360, 190, 0.52f);
+
+    drawCow(1490, 188, 0.42f);
+}
+
+// OBJECT ID: OBJ_VILLAGE_06
+// Object: Paddy Field
+// Created by: Shajia
+void drawPaddyField()
+{
+    // Large paddy field base
+    glColor3f(0.55f, 0.67f, 0.18f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(940, -55);
+        glVertex2f(1585, -55);
+        glVertex2f(1585, 45);
+        glVertex2f(940, 45);
+    glEnd();
+
+    // Field row lines
+    glColor3f(0.32f, 0.48f, 0.12f);
+    glLineWidth(1.5f);
+
+    for (int y = -42; y <= 32; y += 18)
+    {
+        glBegin(GL_LINES);
+            glVertex2f(950, y);
+            glVertex2f(1575, y);
+        glEnd();
+    }
+
+    // Dense paddy plants
+    for (int y = -35; y <= 20; y += 18)
+    {
+        for (int x = 955; x <= 1570; x += 20)
+        {
+            // Stem
+            glColor3f(0.16f, 0.42f, 0.08f);
+
+            glBegin(GL_LINES);
+                glVertex2f(x, y);
+                glVertex2f(x, y + 20);
+
+                glVertex2f(x, y + 9);
+                glVertex2f(x - 5, y + 15);
+
+                glVertex2f(x, y + 11);
+                glVertex2f(x + 5, y + 17);
+            glEnd();
+
+            // Golden paddy grains
+            glColor3f(0.92f, 0.73f, 0.12f);
+
+            drawCircle(x - 3, y + 21, 1.8f);
+            drawCircle(x, y + 23, 1.8f);
+            drawCircle(x + 3, y + 21, 1.8f);
+        }
+    }
+
+    // Front field border
+    glColor3f(0.38f, 0.52f, 0.12f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(935, -60);
+        glVertex2f(1590, -60);
+        glVertex2f(1585, -50);
+        glVertex2f(940, -50);
+    glEnd();
+
+    glLineWidth(1);
+}
+
+// OBJECT ID: OBJ_VILLAGE_07
+// Object: Bamboo Fence
+// Created by: Shajia
+
+void drawBambooFence()
+{
+    // Vertical bamboo poles
+    for (int x = 950; x <= 1570; x += 45)
+    {
+        glColor3f(0.55f, 0.38f, 0.14f);
+
+        glBegin(GL_QUADS);
+            glVertex2f(x, -58);
+            glVertex2f(x + 7, -58);
+            glVertex2f(x + 7, -15);
+            glVertex2f(x, -15);
+        glEnd();
+
+        // Bamboo joint marks
+        glColor3f(0.35f, 0.24f, 0.10f);
+
+        glBegin(GL_LINES);
+            glVertex2f(x, -45);
+            glVertex2f(x + 7, -45);
+
+            glVertex2f(x, -28);
+            glVertex2f(x + 7, -28);
+        glEnd();
+    }
+
+    // Lower horizontal bamboo rail
+    glColor3f(0.62f, 0.43f, 0.16f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(945, -48);
+        glVertex2f(1578, -48);
+        glVertex2f(1578, -41);
+        glVertex2f(945, -41);
+    glEnd();
+
+    // Upper horizontal bamboo rail
+    glBegin(GL_QUADS);
+        glVertex2f(945, -30);
+        glVertex2f(1578, -30);
+        glVertex2f(1578, -23);
+        glVertex2f(945, -23);
+    glEnd();
+
+    // Diagonal supports
+    glColor3f(0.50f, 0.34f, 0.13f);
+    glLineWidth(4);
+
+    for (int x = 955; x <= 1510; x += 135)
+    {
+        glBegin(GL_LINES);
+            glVertex2f(x, -55);
+            glVertex2f(x + 45, -18);
+        glEnd();
+    }
+
+    glLineWidth(1);
+}
+// OBJECT ID: OBJ_VILLAGE_08
+// Object: Village Pond
+// Created by: Shajia
+
+void drawVillagePond()
+{
+    // Pond outer bank
+    glColor3f(0.30f, 0.55f, 0.18f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(930, 195);
+        glVertex2f(960, 180);
+        glVertex2f(1030, 175);
+        glVertex2f(1090, 185);
+        glVertex2f(1110, 210);
+        glVertex2f(1090, 235);
+        glVertex2f(1025, 245);
+        glVertex2f(960, 238);
+        glVertex2f(930, 220);
+    glEnd();
+
+    // Pond water
+    glColor3f(0.12f, 0.58f, 0.82f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(945, 200);
+        glVertex2f(970, 188);
+        glVertex2f(1028, 184);
+        glVertex2f(1080, 192);
+        glVertex2f(1095, 210);
+        glVertex2f(1078, 226);
+        glVertex2f(1025, 235);
+        glVertex2f(970, 229);
+        glVertex2f(945, 216);
+    glEnd();
+
+    // Water details
+    glColor3f(0.72f, 0.88f, 0.95f);
+    glLineWidth(1);
+
+    glBegin(GL_LINES);
+        glVertex2f(965, 205);
+        glVertex2f(1005, 205);
+
+        glVertex2f(1030, 218);
+        glVertex2f(1070, 218);
+
+        glVertex2f(985, 225);
+        glVertex2f(1015, 225);
+    glEnd();
+
+    // Lily pads
+    glColor3f(0.12f, 0.45f, 0.14f);
+
+    drawCircle(980, 215, 6);
+    drawCircle(1045, 202, 7);
+    drawCircle(1065, 222, 5);
+}
+
+// OBJECT ID: OBJ_VILLAGE_08
+// Object: Hay Stack
+// Created by: Shajia
+
+void drawHayStack()
+{
+    // Main hay body
+    glColor3f(0.82f, 0.60f, 0.16f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(1375, 250);
+        glVertex2f(1382, 280);
+        glVertex2f(1395, 315);
+        glVertex2f(1415, 345);
+        glVertex2f(1435, 365);
+        glVertex2f(1455, 345);
+        glVertex2f(1475, 315);
+        glVertex2f(1488, 280);
+        glVertex2f(1495, 250);
+    glEnd();
+
+    // Lighter middle hay
+    glColor3f(0.90f, 0.70f, 0.22f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(1392, 255);
+        glVertex2f(1402, 292);
+        glVertex2f(1418, 325);
+        glVertex2f(1435, 350);
+        glVertex2f(1452, 325);
+        glVertex2f(1468, 292);
+        glVertex2f(1478, 255);
+    glEnd();
+
+    // Hay texture lines
+    glColor3f(0.58f, 0.39f, 0.10f);
+    glLineWidth(1);
+
+    glBegin(GL_LINES);
+        glVertex2f(1390, 270);
+        glVertex2f(1430, 340);
+
+        glVertex2f(1410, 260);
+        glVertex2f(1438, 345);
+
+        glVertex2f(1430, 260);
+        glVertex2f(1442, 340);
+
+        glVertex2f(1450, 260);
+        glVertex2f(1445, 325);
+
+        glVertex2f(1470, 265);
+        glVertex2f(1448, 320);
+
+        glVertex2f(1395, 290);
+        glVertex2f(1470, 290);
+
+        glVertex2f(1405, 310);
+        glVertex2f(1462, 310);
+    glEnd();
+
+    // Top straw
+    glLineWidth(2);
+
+    glBegin(GL_LINES);
+        glVertex2f(1435, 360);
+        glVertex2f(1425, 380);
+
+        glVertex2f(1435, 360);
+        glVertex2f(1435, 383);
+
+        glVertex2f(1435, 360);
+        glVertex2f(1447, 379);
+    glEnd();
+
+    glLineWidth(1);
+}
+
 // DISPLAY FUNCTION
 
 void display()
@@ -2343,6 +3458,11 @@ void display()
 
     // Background
     drawSky();
+    drawStars();
+
+    // Heavy rain in background
+    drawBackgroundRain();
+
     drawGround();
 
     // Background scenery
@@ -2350,6 +3470,24 @@ void display()
     drawVillageHills();
     drawVillageBackgroundTrees();
     drawVillagePineTrees();
+
+    // Shajia village environment
+    drawPaddyField();
+    drawBambooFence();
+
+
+    drawLargeVillageTrees();
+
+    // Foreground village object
+    drawHayStack();
+
+    drawWindmill();
+
+    drawMudHouse();
+    drawTinHouse();
+
+
+    drawVillageCows();
 
     // River
     drawRiver();
@@ -2384,13 +3522,29 @@ void display()
     drawBridge();
     drawVillageEntryRoad();
 
-    // Sky Objects
-    drawSun();
+    if (sceneMode == 0)
+    {
+        drawSun();
+    }
+    else if (sceneMode == 1)
+    {
+        drawSun();
+    }
+    else
+    {
+        drawMoon();
+    }
 
-    drawCloud(250, 600);
-    drawCloud(520, 550);
-    drawCloud(1050, 600);
-    drawCloud(1400, 550);
+    drawCloud((250 + cloudMove > 1700) ? 250 + cloudMove - 1900 : 250 + cloudMove, 600);
+
+    drawCloud((520 + cloudMove > 1700) ? 520 + cloudMove - 1900 : 520 + cloudMove, 550);
+
+    drawCloud((1050 + cloudMove > 1700) ? 1050 + cloudMove - 1900 : 1050 + cloudMove, 600);
+
+    drawCloud((1400 + cloudMove > 1700) ? 1400 + cloudMove - 1900 : 1400 + cloudMove, 550);
+
+    // Light rain in foreground
+    drawForegroundRain();
 
     glFlush();
 }
@@ -2427,9 +3581,12 @@ int main(int argc, char** argv)
     init();
 
     glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);
+    glutTimerFunc(30, updateCloud, 0);
+    glutTimerFunc(25, updateRain, 0);
+    glutTimerFunc(30, updateWindmill, 0);
 
     glutMainLoop();
 
     return 0;
 }
-
