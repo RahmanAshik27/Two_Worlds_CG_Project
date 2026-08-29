@@ -9,6 +9,8 @@ float backgroundRainMove = 0.0f;
 float foregroundRainMove = 0.0f;;
 
 float cowMove = 0.0f;
+float carMove = 0.0f;
+float busMove = 0.0f;
 
 int sceneMode = 0;
 
@@ -78,6 +80,36 @@ void updateCow(int value)
     glutPostRedisplay();
     glutTimerFunc(50, updateCow, 0);
 }
+
+// FUNCTION ID: FUNC_ANIM_05
+// Function: City Car Movement
+// Created by: Apon
+
+void updateCar(int value)
+{
+    carMove += 2.5f;
+
+    if (carMove > 1750.0f)
+        carMove = -900.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateCar, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_06
+// Function: City Bus Movement
+// Created by: Apon
+void updateBus(int value)
+{
+    busMove += 1.8f;
+
+    if (busMove > 1800.0f)
+        busMove = -300.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateBus, 0);
+}
+
 
 // HELPER FUNCTION: Draw Circle
 
@@ -3469,6 +3501,145 @@ void drawHayStack()
     glLineWidth(1);
 }
 
+// OBJECT ID: OBJ_CITY_05
+// Object: City Car
+// Created by: Apon
+void drawCityCar(float x, float y, float s)
+{
+    // Lower body
+    glColor3f(0.85f, 0.16f, 0.12f);
+    glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + 100 * s, y);
+        glVertex2f(x + 100 * s, y + 30 * s);
+        glVertex2f(x, y + 30 * s);
+    glEnd();
+
+    // Upper body
+    glColor3f(0.92f, 0.20f, 0.15f);
+    glBegin(GL_POLYGON);
+        glVertex2f(x + 20 * s, y + 30 * s);
+        glVertex2f(x + 35 * s, y + 52 * s);
+        glVertex2f(x + 70 * s, y + 52 * s);
+        glVertex2f(x + 85 * s, y + 30 * s);
+    glEnd();
+
+    // Windows
+    glColor3f(0.55f, 0.78f, 0.88f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 37 * s, y + 47 * s);
+        glVertex2f(x + 50 * s, y + 47 * s);
+        glVertex2f(x + 50 * s, y + 32 * s);
+        glVertex2f(x + 27 * s, y + 32 * s);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + 54 * s, y + 47 * s);
+        glVertex2f(x + 68 * s, y + 47 * s);
+        glVertex2f(x + 79 * s, y + 32 * s);
+        glVertex2f(x + 54 * s, y + 32 * s);
+    glEnd();
+
+    // Bumpers
+    glColor3f(0.18f, 0.18f, 0.18f);
+    glBegin(GL_QUADS);
+        glVertex2f(x - 4 * s, y + 4 * s);
+        glVertex2f(x + 5 * s, y + 4 * s);
+        glVertex2f(x + 5 * s, y + 12 * s);
+        glVertex2f(x - 4 * s, y + 12 * s);
+
+        glVertex2f(x + 95 * s, y + 4 * s);
+        glVertex2f(x + 104 * s, y + 4 * s);
+        glVertex2f(x + 104 * s, y + 12 * s);
+        glVertex2f(x + 95 * s, y + 12 * s);
+    glEnd();
+
+    // Wheels
+    glColor3f(0.08f, 0.08f, 0.08f);
+    drawCircle(x + 22 * s, y, 11 * s);
+    drawCircle(x + 78 * s, y, 11 * s);
+
+    // Wheel centers
+    glColor3f(0.60f, 0.60f, 0.60f);
+    drawCircle(x + 22 * s, y, 5 * s);
+    drawCircle(x + 78 * s, y, 5 * s);
+
+    // Headlight
+    glColor3f(1.0f, 0.90f, 0.35f);
+    drawCircle(x + 97 * s, y + 20 * s, 4 * s);
+}
+
+// OBJECT ID: OBJ_CITY_06
+// Object: City Bus
+// Created by: Apon
+void drawCityBus(float x, float y, float s)
+{
+    // Main body
+    glColor3f(0.12f, 0.42f, 0.72f);
+    glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + 150 * s, y);
+        glVertex2f(x + 150 * s, y + 55 * s);
+        glVertex2f(x, y + 55 * s);
+    glEnd();
+
+    // Upper body
+    glColor3f(0.10f, 0.36f, 0.65f);
+    glBegin(GL_QUADS);
+        glVertex2f(x + 8 * s, y + 55 * s);
+        glVertex2f(x + 142 * s, y + 55 * s);
+        glVertex2f(x + 135 * s, y + 78 * s);
+        glVertex2f(x + 15 * s, y + 78 * s);
+    glEnd();
+
+    // Windows
+    glColor3f(0.65f, 0.85f, 0.92f);
+
+    for (int i = 0; i < 5; i++)
+    {
+        float wx = x + (18 + i * 24) * s;
+
+        glBegin(GL_QUADS);
+            glVertex2f(wx, y + 45 * s);
+            glVertex2f(wx + 18 * s, y + 45 * s);
+            glVertex2f(wx + 18 * s, y + 68 * s);
+            glVertex2f(wx, y + 68 * s);
+        glEnd();
+    }
+
+    // Front window
+    glColor3f(0.50f, 0.76f, 0.88f);
+    glBegin(GL_QUADS);
+        glVertex2f(x + 125 * s, y + 43 * s);
+        glVertex2f(x + 143 * s, y + 43 * s);
+        glVertex2f(x + 136 * s, y + 68 * s);
+        glVertex2f(x + 125 * s, y + 68 * s);
+    glEnd();
+
+    // Door
+    glColor3f(0.18f, 0.25f, 0.30f);
+    glBegin(GL_QUADS);
+        glVertex2f(x + 105 * s, y + 8 * s);
+        glVertex2f(x + 122 * s, y + 8 * s);
+        glVertex2f(x + 122 * s, y + 42 * s);
+        glVertex2f(x + 105 * s, y + 42 * s);
+    glEnd();
+
+    // Wheels
+    glColor3f(0.07f, 0.07f, 0.07f);
+    drawCircle(x + 30 * s, y, 13 * s);
+    drawCircle(x + 120 * s, y, 13 * s);
+
+    glColor3f(0.55f, 0.55f, 0.55f);
+    drawCircle(x + 30 * s, y, 6 * s);
+    drawCircle(x + 120 * s, y, 6 * s);
+
+    // Headlight
+    glColor3f(1.0f, 0.90f, 0.30f);
+    drawCircle(x + 147 * s, y + 18 * s, 4 * s);
+}
+
 // DISPLAY FUNCTION
 
 void display()
@@ -3527,7 +3698,7 @@ void display()
     drawHighRiseBuilding();
     drawFoodCourt();
     drawHospital();
-    drawBusStop();
+
 
     // City Infrastructure
     drawTrafficSignal();
@@ -3540,6 +3711,14 @@ void display()
     // Connection
     drawBridge();
     drawVillageEntryRoad();
+
+    drawCityCar(100 + carMove, 110, 0.75f);
+    drawCityCar(420 + carMove, 82, 0.65f);
+    drawCityCar(760 + carMove, 110, 0.72f);
+
+    drawCityBus(-180 + busMove, 82, 0.75f);
+
+    drawBusStop();
 
     if (sceneMode == 0)
     {
@@ -3605,6 +3784,8 @@ int main(int argc, char** argv)
     glutTimerFunc(25, updateRain, 0);
     glutTimerFunc(30, updateWindmill, 0);
     glutTimerFunc(50, updateCow, 0);
+    glutTimerFunc(30, updateCar, 0);
+    glutTimerFunc(30, updateBus, 0);
 
     glutMainLoop();
 
