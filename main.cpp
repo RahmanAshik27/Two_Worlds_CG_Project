@@ -2916,6 +2916,272 @@ void drawVillageCows()
     drawCow(1490, 188, 0.42f);
 }
 
+// OBJECT ID: OBJ_VILLAGE_06
+// Object: Paddy Field
+// Created by: Shajia
+void drawPaddyField()
+{
+    // Large paddy field base
+    glColor3f(0.55f, 0.67f, 0.18f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(940, -55);
+        glVertex2f(1585, -55);
+        glVertex2f(1585, 45);
+        glVertex2f(940, 45);
+    glEnd();
+
+    // Field row lines
+    glColor3f(0.32f, 0.48f, 0.12f);
+    glLineWidth(1.5f);
+
+    for (int y = -42; y <= 32; y += 18)
+    {
+        glBegin(GL_LINES);
+            glVertex2f(950, y);
+            glVertex2f(1575, y);
+        glEnd();
+    }
+
+    // Dense paddy plants
+    for (int y = -35; y <= 20; y += 18)
+    {
+        for (int x = 955; x <= 1570; x += 20)
+        {
+            // Stem
+            glColor3f(0.16f, 0.42f, 0.08f);
+
+            glBegin(GL_LINES);
+                glVertex2f(x, y);
+                glVertex2f(x, y + 20);
+
+                glVertex2f(x, y + 9);
+                glVertex2f(x - 5, y + 15);
+
+                glVertex2f(x, y + 11);
+                glVertex2f(x + 5, y + 17);
+            glEnd();
+
+            // Golden paddy grains
+            glColor3f(0.92f, 0.73f, 0.12f);
+
+            drawCircle(x - 3, y + 21, 1.8f);
+            drawCircle(x, y + 23, 1.8f);
+            drawCircle(x + 3, y + 21, 1.8f);
+        }
+    }
+
+    // Front field border
+    glColor3f(0.38f, 0.52f, 0.12f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(935, -60);
+        glVertex2f(1590, -60);
+        glVertex2f(1585, -50);
+        glVertex2f(940, -50);
+    glEnd();
+
+    glLineWidth(1);
+}
+
+// OBJECT ID: OBJ_VILLAGE_07
+// Object: Bamboo Fence
+// Created by: Shajia
+
+void drawBambooFence()
+{
+    // Vertical bamboo poles
+    for (int x = 950; x <= 1570; x += 45)
+    {
+        glColor3f(0.55f, 0.38f, 0.14f);
+
+        glBegin(GL_QUADS);
+            glVertex2f(x, -58);
+            glVertex2f(x + 7, -58);
+            glVertex2f(x + 7, -15);
+            glVertex2f(x, -15);
+        glEnd();
+
+        // Bamboo joint marks
+        glColor3f(0.35f, 0.24f, 0.10f);
+
+        glBegin(GL_LINES);
+            glVertex2f(x, -45);
+            glVertex2f(x + 7, -45);
+
+            glVertex2f(x, -28);
+            glVertex2f(x + 7, -28);
+        glEnd();
+    }
+
+    // Lower horizontal bamboo rail
+    glColor3f(0.62f, 0.43f, 0.16f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(945, -48);
+        glVertex2f(1578, -48);
+        glVertex2f(1578, -41);
+        glVertex2f(945, -41);
+    glEnd();
+
+    // Upper horizontal bamboo rail
+    glBegin(GL_QUADS);
+        glVertex2f(945, -30);
+        glVertex2f(1578, -30);
+        glVertex2f(1578, -23);
+        glVertex2f(945, -23);
+    glEnd();
+
+    // Diagonal supports
+    glColor3f(0.50f, 0.34f, 0.13f);
+    glLineWidth(4);
+
+    for (int x = 955; x <= 1510; x += 135)
+    {
+        glBegin(GL_LINES);
+            glVertex2f(x, -55);
+            glVertex2f(x + 45, -18);
+        glEnd();
+    }
+
+    glLineWidth(1);
+}
+// OBJECT ID: OBJ_VILLAGE_08
+// Object: Village Pond
+// Created by: Shajia
+
+void drawVillagePond()
+{
+    // Pond outer bank
+    glColor3f(0.30f, 0.55f, 0.18f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(930, 195);
+        glVertex2f(960, 180);
+        glVertex2f(1030, 175);
+        glVertex2f(1090, 185);
+        glVertex2f(1110, 210);
+        glVertex2f(1090, 235);
+        glVertex2f(1025, 245);
+        glVertex2f(960, 238);
+        glVertex2f(930, 220);
+    glEnd();
+
+    // Pond water
+    glColor3f(0.12f, 0.58f, 0.82f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(945, 200);
+        glVertex2f(970, 188);
+        glVertex2f(1028, 184);
+        glVertex2f(1080, 192);
+        glVertex2f(1095, 210);
+        glVertex2f(1078, 226);
+        glVertex2f(1025, 235);
+        glVertex2f(970, 229);
+        glVertex2f(945, 216);
+    glEnd();
+
+    // Water details
+    glColor3f(0.72f, 0.88f, 0.95f);
+    glLineWidth(1);
+
+    glBegin(GL_LINES);
+        glVertex2f(965, 205);
+        glVertex2f(1005, 205);
+
+        glVertex2f(1030, 218);
+        glVertex2f(1070, 218);
+
+        glVertex2f(985, 225);
+        glVertex2f(1015, 225);
+    glEnd();
+
+    // Lily pads
+    glColor3f(0.12f, 0.45f, 0.14f);
+
+    drawCircle(980, 215, 6);
+    drawCircle(1045, 202, 7);
+    drawCircle(1065, 222, 5);
+}
+
+// OBJECT ID: OBJ_VILLAGE_08
+// Object: Hay Stack
+// Created by: Shajia
+
+void drawHayStack()
+{
+    // Main hay body
+    glColor3f(0.82f, 0.60f, 0.16f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(1375, 250);
+        glVertex2f(1382, 280);
+        glVertex2f(1395, 315);
+        glVertex2f(1415, 345);
+        glVertex2f(1435, 365);
+        glVertex2f(1455, 345);
+        glVertex2f(1475, 315);
+        glVertex2f(1488, 280);
+        glVertex2f(1495, 250);
+    glEnd();
+
+    // Lighter middle hay
+    glColor3f(0.90f, 0.70f, 0.22f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(1392, 255);
+        glVertex2f(1402, 292);
+        glVertex2f(1418, 325);
+        glVertex2f(1435, 350);
+        glVertex2f(1452, 325);
+        glVertex2f(1468, 292);
+        glVertex2f(1478, 255);
+    glEnd();
+
+    // Hay texture lines
+    glColor3f(0.58f, 0.39f, 0.10f);
+    glLineWidth(1);
+
+    glBegin(GL_LINES);
+        glVertex2f(1390, 270);
+        glVertex2f(1430, 340);
+
+        glVertex2f(1410, 260);
+        glVertex2f(1438, 345);
+
+        glVertex2f(1430, 260);
+        glVertex2f(1442, 340);
+
+        glVertex2f(1450, 260);
+        glVertex2f(1445, 325);
+
+        glVertex2f(1470, 265);
+        glVertex2f(1448, 320);
+
+        glVertex2f(1395, 290);
+        glVertex2f(1470, 290);
+
+        glVertex2f(1405, 310);
+        glVertex2f(1462, 310);
+    glEnd();
+
+    // Top straw
+    glLineWidth(2);
+
+    glBegin(GL_LINES);
+        glVertex2f(1435, 360);
+        glVertex2f(1425, 380);
+
+        glVertex2f(1435, 360);
+        glVertex2f(1435, 383);
+
+        glVertex2f(1435, 360);
+        glVertex2f(1447, 379);
+    glEnd();
+
+    glLineWidth(1);
+}
 
 // DISPLAY FUNCTION
 
@@ -2933,13 +3199,21 @@ void display()
     drawVillageBackgroundTrees();
     drawVillagePineTrees();
 
+    // Shajia village environment
+    drawPaddyField();
+    drawBambooFence();
+
+
     drawLargeVillageTrees();
 
     // Foreground village object
+    drawHayStack();
+
     drawWindmill();
 
     drawMudHouse();
     drawTinHouse();
+
 
     drawVillageCows();
 
