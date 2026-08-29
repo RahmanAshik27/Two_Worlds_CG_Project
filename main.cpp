@@ -8,6 +8,8 @@ float windmillAngle = 0.0f;
 float backgroundRainMove = 0.0f;
 float foregroundRainMove = 0.0f;;
 
+float cowMove = 0.0f;
+
 int sceneMode = 0;
 
 // 0 = Day
@@ -32,6 +34,7 @@ void updateCloud(int value)
 // FUNCTION ID: FUNC_ANIM_02
 // Function: Rain Animation
 // Created by: Ashik
+
 void updateRain(int value)
 {
     backgroundRainMove += 18.0f;
@@ -47,8 +50,9 @@ void updateRain(int value)
     glutTimerFunc(25, updateRain, 0);
 }
 
-// FUNCTION ID: FUNC_ANIM_02
-// Function: Windmill Rotation Animation
+// FUNCTION ID: FUNC_ANIM_03
+// Function: Windmill Rotation
+// Created by: Rony
 
 void updateWindmill(int value)
 {
@@ -61,6 +65,19 @@ void updateWindmill(int value)
     glutTimerFunc(30, updateWindmill, 0);
 }
 
+// FUNCTION ID: FUNC_ANIM_04
+// Function: Cow Forward Movement
+// Created by: Rony
+void updateCow(int value)
+{
+    cowMove += 1.5f;
+
+    if (cowMove > 700.0f)
+        cowMove = -650.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(50, updateCow, 0);
+}
 
 // HELPER FUNCTION: Draw Circle
 
@@ -3173,19 +3190,21 @@ void drawCow(float x, float y, float s)
     glLineWidth(1);
 }
 
+// OBJECT ID: OBJ_VILLAGE_05
+// Object: Village Cows
+// Created by: Rony
+
 void drawVillageCows()
 {
-
-    drawCow(970, 190, 0.45f);
-
-    drawCow(1360, 190, 0.52f);
-
-    drawCow(1490, 188, 0.42f);
+    drawCow(970 + cowMove, 190, 0.55f);
+    drawCow(1360 + cowMove, 190, 0.62f);
+    drawCow(1490 + cowMove, 188, 0.52f);
 }
 
 // OBJECT ID: OBJ_VILLAGE_06
 // Object: Paddy Field
 // Created by: Shajia
+
 void drawPaddyField()
 {
     // Large paddy field base
@@ -3585,6 +3604,7 @@ int main(int argc, char** argv)
     glutTimerFunc(30, updateCloud, 0);
     glutTimerFunc(25, updateRain, 0);
     glutTimerFunc(30, updateWindmill, 0);
+    glutTimerFunc(50, updateCow, 0);
 
     glutMainLoop();
 
