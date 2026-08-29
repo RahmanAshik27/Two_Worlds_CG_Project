@@ -853,10 +853,10 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\imm.h
 	<_mingw_unicode.h>
 
-1784374813 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glut.h
+1781367250 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glut.h
 	"freeglut_std.h"
 
-1784374813 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\freeglut_std.h
+1781367250 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\freeglut_std.h
 	<windows.h>
 	<EGL/egl.h>
 	<GLES/gl.h>
@@ -874,7 +874,7 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glu.h
 	<GL/gl.h>
 
-1787766605 source:e:\two_worlds_cg_project\two_worlds_git_push\two_worlds_cg_project\main.cpp
+1788031749 source:e:\two_worlds_cg_project\two_worlds_git_push\two_worlds_cg_project\main.cpp
 	<windows.h>
 	<GL/glut.h>
 	<cmath>

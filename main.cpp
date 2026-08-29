@@ -2,6 +2,66 @@
 #include <GL/glut.h>
 #include <cmath>
 
+float cloudMove = 0.0f;
+float windmillAngle = 0.0f;
+
+float backgroundRainMove = 0.0f;
+float foregroundRainMove = 0.0f;;
+
+int sceneMode = 0;
+
+// 0 = Day
+// 1 = Evening
+// 2 = Night
+// 3 = Rain
+
+// FUNCTION ID: FUNC_ANIM_01
+// Function: Cloud Movement Animation
+
+void updateCloud(int value)
+{
+    cloudMove += 1.0f;
+
+    if (cloudMove > 1600)
+        cloudMove = -400;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateCloud, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_02
+// Function: Rain Animation
+// Created by: Ashik
+void updateRain(int value)
+{
+    backgroundRainMove += 18.0f;
+    foregroundRainMove += 22.0f;
+
+    if (backgroundRainMove > 900)
+        backgroundRainMove = 0;
+
+    if (foregroundRainMove > 900)
+        foregroundRainMove = 0;
+
+    glutPostRedisplay();
+    glutTimerFunc(25, updateRain, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_02
+// Function: Windmill Rotation Animation
+
+void updateWindmill(int value)
+{
+    windmillAngle += 2.0f;
+
+    if (windmillAngle >= 360.0f)
+        windmillAngle = 0.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateWindmill, 0);
+}
+
+
 // HELPER FUNCTION: Draw Circle
 
 void drawCircle(float centerX, float centerY, float radius)
@@ -31,19 +91,202 @@ void drawCircle(float centerX, float centerY, float radius)
 
 void drawSky()
 {
-    glColor3f(0.53f, 0.81f, 0.98f);
+    if (sceneMode == 0)
+    {
+        glColor3f(0.45f, 0.78f, 0.95f);
+    }
+    else if (sceneMode == 1)
+    {
+        glColor3f(0.95f, 0.48f, 0.28f);
+    }
+    else if (sceneMode == 2)
+    {
+        glColor3f(0.05f, 0.08f, 0.20f);
+    }
+    else
+    {
+        // Rain sky
+        glColor3f(0.25f, 0.31f, 0.37f);
+    }
 
     glBegin(GL_QUADS);
-
-        glVertex2f(0, 250);
-        glVertex2f(1600, 250);
+        glVertex2f(0, 205);
+        glVertex2f(1600, 205);
         glVertex2f(1600, 700);
         glVertex2f(0, 700);
-
     glEnd();
 }
 
+// FUNCTION ID: FUNC_INT_01
+// Function: Day Evening Night Control
+// Created by: Ashik
 
+void keyboard(unsigned char key, int x, int y)
+{
+    if (key == 'd' || key == 'D')
+    {
+        sceneMode = 0;
+    }
+    else if (key == 'e' || key == 'E')
+    {
+        sceneMode = 1;
+    }
+    else if (key == 'n' || key == 'N')
+    {
+        sceneMode = 2;
+    }
+    else if (key == 'r' || key == 'R')
+    {
+        sceneMode = 3;
+    }
+
+    glutPostRedisplay();
+}
+
+// FUNCTION ID: FUNC_ANIM_02
+// Function: Heavy Rain Animation
+// Created by: Ashik
+
+// Heavy rain behind all objects
+void drawBackgroundRain()
+{
+    if (sceneMode != 3)
+        return;
+
+    glColor3f(0.72f, 0.80f, 0.88f);
+    glLineWidth(1.0f);
+
+    glBegin(GL_LINES);
+
+    // First dense layer
+    for (int x = 0; x <= 1600; x += 10)
+    {
+        float y = 700 - ((x * 7 + (int)backgroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 6, y - 20);
+    }
+
+    // Second dense layer
+    for (int x = 5; x <= 1600; x += 12)
+    {
+        float y = 700 - ((x * 11 + 300 + (int)backgroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 5, y - 18);
+    }
+
+    // Third layer
+    for (int x = 8; x <= 1600; x += 16)
+    {
+        float y = 700 - ((x * 5 + 550 + (int)backgroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 7, y - 22);
+    }
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+
+// Light rain in front of all objects
+void drawForegroundRain()
+{
+    if (sceneMode != 3)
+        return;
+
+    glColor3f(0.88f, 0.93f, 1.0f);
+    glLineWidth(1.4f);
+
+    glBegin(GL_LINES);
+
+    for (int x = 20; x <= 1600; x += 60)
+    {
+        float y = 700 - ((x * 5 + (int)foregroundRainMove) % 900);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 10, y - 35);
+    }
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+
+void drawMoon()
+{
+    glColor3f(0.95f, 0.95f, 0.80f);
+    drawCircle(1450, 600, 38);
+}
+
+void drawStars()
+{
+    if (sceneMode != 2)
+        return;
+
+    // Small stars
+    glColor3f(0.92f, 0.95f, 1.0f);
+    glPointSize(2.0f);
+
+    glBegin(GL_POINTS);
+        glVertex2f(90, 640);
+        glVertex2f(160, 570);
+        glVertex2f(245, 620);
+        glVertex2f(330, 550);
+        glVertex2f(420, 655);
+        glVertex2f(510, 585);
+        glVertex2f(600, 635);
+        glVertex2f(690, 545);
+        glVertex2f(790, 610);
+        glVertex2f(880, 660);
+        glVertex2f(970, 565);
+        glVertex2f(1060, 630);
+        glVertex2f(1160, 550);
+        glVertex2f(1250, 650);
+        glVertex2f(1340, 585);
+        glVertex2f(1530, 625);
+    glEnd();
+
+    // Medium stars
+    glColor3f(1.0f, 0.96f, 0.72f);
+    glPointSize(4.0f);
+
+    glBegin(GL_POINTS);
+        glVertex2f(210, 660);
+        glVertex2f(470, 620);
+        glVertex2f(740, 655);
+        glVertex2f(1010, 600);
+        glVertex2f(1210, 670);
+        glVertex2f(1490, 560);
+    glEnd();
+
+    // Bright cross stars
+    glColor3f(1.0f, 1.0f, 0.90f);
+    glLineWidth(1.5f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(365, 610);
+        glVertex2f(365, 626);
+        glVertex2f(357, 618);
+        glVertex2f(373, 618);
+
+        glVertex2f(920, 625);
+        glVertex2f(920, 643);
+        glVertex2f(911, 634);
+        glVertex2f(929, 634);
+
+        glVertex2f(1380, 635);
+        glVertex2f(1380, 653);
+        glVertex2f(1371, 644);
+        glVertex2f(1389, 644);
+
+    glEnd();
+
+    glPointSize(1.0f);
+    glLineWidth(1.0f);
+}
 
 // OBJECT ID: OBJ_BASE_02
 // Object: Ground
@@ -84,12 +327,29 @@ void drawSun()
 
 void drawCloud(float x, float y)
 {
-    glColor3f(1.0f, 1.0f, 1.0f);
+    if (sceneMode == 3)
+    {
+        // Rain cloud
+        glColor3f(0.50f, 0.54f, 0.58f);
+    }
+    else if (sceneMode == 2)
+    {
+        // Night cloud
+        glColor3f(0.75f, 0.78f, 0.82f);
+    }
+    else
+    {
+        // Day and Evening cloud
+        glColor3f(1.0f, 1.0f, 1.0f);
+    }
+
 
     drawCircle(x, y, 25);
     drawCircle(x + 25, y + 10, 30);
     drawCircle(x + 55, y + 5, 27);
     drawCircle(x + 80, y, 23);
+
+
 }
 
 
@@ -2640,6 +2900,12 @@ void drawWindmill()
     drawCircle(1180, 400, 10);
 
 
+    glPushMatrix();
+
+    glTranslatef(1180, 400, 0);
+    glRotatef(windmillAngle, 0, 0, 1);
+    glTranslatef(-1180, -400, 0);
+
     // Blade 1 (Vertical)
     glLineWidth(4);
 
@@ -2689,6 +2955,7 @@ void drawWindmill()
         glVertex2f(1230, 412);
 
     glEnd();
+    glPopMatrix();
 }
 
 // Draw one large village tree
@@ -3191,6 +3458,11 @@ void display()
 
     // Background
     drawSky();
+    drawStars();
+
+    // Heavy rain in background
+    drawBackgroundRain();
+
     drawGround();
 
     // Background scenery
@@ -3250,13 +3522,29 @@ void display()
     drawBridge();
     drawVillageEntryRoad();
 
-    // Sky Objects
-    drawSun();
+    if (sceneMode == 0)
+    {
+        drawSun();
+    }
+    else if (sceneMode == 1)
+    {
+        drawSun();
+    }
+    else
+    {
+        drawMoon();
+    }
 
-    drawCloud(250, 600);
-    drawCloud(520, 550);
-    drawCloud(1050, 600);
-    drawCloud(1400, 550);
+    drawCloud((250 + cloudMove > 1700) ? 250 + cloudMove - 1900 : 250 + cloudMove, 600);
+
+    drawCloud((520 + cloudMove > 1700) ? 520 + cloudMove - 1900 : 520 + cloudMove, 550);
+
+    drawCloud((1050 + cloudMove > 1700) ? 1050 + cloudMove - 1900 : 1050 + cloudMove, 600);
+
+    drawCloud((1400 + cloudMove > 1700) ? 1400 + cloudMove - 1900 : 1400 + cloudMove, 550);
+
+    // Light rain in foreground
+    drawForegroundRain();
 
     glFlush();
 }
@@ -3293,6 +3581,10 @@ int main(int argc, char** argv)
     init();
 
     glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);
+    glutTimerFunc(30, updateCloud, 0);
+    glutTimerFunc(25, updateRain, 0);
+    glutTimerFunc(30, updateWindmill, 0);
 
     glutMainLoop();
 
