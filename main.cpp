@@ -19,6 +19,149 @@ int sceneMode = 0;
 // 2 = Night
 // 3 = Rain
 
+int trafficState = 0;
+float paddySway = 0.0f;
+bool paddyDirection = true;
+
+// Boat movement position
+float boatMove = 0.0f;
+
+// Bird movement position
+float birdMove = 0.0f;
+float birdWave = 0.0f;
+
+float airplaneMove = 0.0f;
+
+int ambulanceLight = 0;
+
+float reverseCarMove = 0.0f;
+
+float worldTransitionMove = 0.0f;
+
+float pedestrianMove = 0.0f;
+float personMove1 = 0.0f;
+float personMove2 = 250.0f;
+float personMove3 = 500.0f;
+float personMove4 = 850.0f;
+float personMove5 = 1100.0f;
+float personMove6 = 1350.0f;
+
+float pedestrianMoveLeft = 0.0f;
+float cityPersonLeft1 = 700.0f;
+float cityPersonLeft2 = 520.0f;
+
+float villagePersonLeft1 = 1600.0f;
+float villagePersonLeft2 = 1400.0f;
+
+float rippleMove = 0.0f;
+
+
+
+
+void drawCityCar(float x, float y, float s);
+void drawVillageVanDriver(float x, float y, float s);
+
+// FUNCTION ID: FUNC_ANIM_13
+// Function: City Car to Village Van Transition
+// Created by: Apon
+
+void updateWorldTransition(int value)
+{
+    worldTransitionMove += 2.0f;
+
+    if (worldTransitionMove > 800.0f)
+        worldTransitionMove = 0.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateWorldTransition, 0);
+}
+
+
+// FUNCTION ID: FUNC_ANIM_12
+// Function: Ambulance Emergency Light
+// Created by: Mostafiz
+
+void updateAmbulanceLight(int value)
+{
+    ambulanceLight = 1 - ambulanceLight;
+
+    glutPostRedisplay();
+    glutTimerFunc(400, updateAmbulanceLight, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_11
+// Function: Airplane Movement
+// Created by: Rony
+
+void updateAirplane(int value)
+{
+    airplaneMove += 2.5f;
+
+    // Restart from left after crossing the screen
+    if (airplaneMove > 1800.0f)
+    {
+        airplaneMove = -500.0f;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateAirplane, 0);
+}
+// FUNCTION ID: FUNC_ANIM_10
+// Function: Flying Birds Movement
+// Created by: Apon
+
+void updateBirds(int value)
+{
+    birdMove += 0.7f;
+    birdWave += 0.08f;
+
+    if (birdMove > 1700.0f)
+    {
+        birdMove = -1700.0f;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateBirds, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_09
+// Function: River Boat Movement
+// Created by: Shajia
+
+void updateBoat(int value)
+{
+    boatMove += 0.5f;
+
+    // Keep the boats inside the visible river area
+    if (boatMove > 300.0f)
+    {
+        boatMove = -300.0f;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateBoat, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_08
+// Function: Paddy Field Sway Animation
+// Created by: Shajia
+void updatePaddy(int value)
+{
+    if (paddyDirection)
+        paddySway += 0.5f;
+    else
+        paddySway -= 0.5f;
+
+    if (paddySway >= 4.0f)
+        paddyDirection = false;
+
+    if (paddySway <= -4.0f)
+        paddyDirection = true;
+
+    glutPostRedisplay();
+    glutTimerFunc(40, updatePaddy, 0);
+}
+
 // FUNCTION ID: FUNC_ANIM_01
 // Function: Cloud Movement Animation
 
@@ -89,8 +232,10 @@ void updateCar(int value)
 {
     carMove += 2.5f;
 
-    if (carMove > 1750.0f)
-        carMove = -900.0f;
+    // Cars disappear near village entry
+    // Then restart from city side
+    if (carMove > 720.0f)
+        carMove = -700.0f;
 
     glutPostRedisplay();
     glutTimerFunc(30, updateCar, 0);
@@ -130,6 +275,26 @@ void drawCircle(float centerX, float centerY, float radius)
     }
 
     glEnd();
+}
+
+// FUNCTION ID: FUNC_ANIM_07
+// Function: Traffic Signal Animation
+// Created by: Mostafiz
+void updateTrafficSignal(int value)
+{
+    trafficState++;
+
+    if (trafficState > 2)
+        trafficState = 0;
+
+    glutPostRedisplay();
+
+    if (trafficState == 0)
+        glutTimerFunc(3000, updateTrafficSignal, 0);
+    else if (trafficState == 1)
+        glutTimerFunc(4000, updateTrafficSignal, 0);
+    else
+        glutTimerFunc(1500, updateTrafficSignal, 0);
 }
 
 
@@ -355,8 +520,6 @@ void drawGround()
     glEnd();
 }
 
-
-
 // OBJECT ID: OBJ_BASE_03
 // Object: Sun
 // Created by: Ashik
@@ -367,8 +530,6 @@ void drawSun()
 
     drawCircle(100, 610, 45);
 }
-
-
 
 // OBJECT ID: OBJ_BASE_04
 // Object: Cloud
@@ -400,8 +561,6 @@ void drawCloud(float x, float y)
 
 
 }
-
-
 // SUPPORTING FUNCTION
 // Distant City Skyline
 // Background Decoration Only
@@ -435,9 +594,6 @@ void drawDistantCity()
             glEnd();
         }
     }
-
-
-
     // Building 2
 
     glColor3f(0.46f, 0.58f, 0.68f);
@@ -463,8 +619,6 @@ void drawDistantCity()
             glEnd();
         }
     }
-
-
 
     // Building 3
     // Tall
@@ -493,8 +647,6 @@ void drawDistantCity()
         }
     }
 
-
-
     // Building 4
 
     glColor3f(0.50f, 0.63f, 0.72f);
@@ -520,8 +672,6 @@ void drawDistantCity()
             glEnd();
         }
     }
-
-
 
     // Building 5
     // Tall
@@ -550,8 +700,6 @@ void drawDistantCity()
         }
     }
 
-
-
     // Building 6
 
     glColor3f(0.42f, 0.56f, 0.66f);
@@ -578,7 +726,6 @@ void drawDistantCity()
         }
     }
 }
-
 
 // OBJECT ID: OBJ_CITY_01
 // Object: City Base
@@ -640,7 +787,6 @@ void drawRoadBorder()
     glEnd();
 }
 
-
 // OBJECT ID: OBJ_CITY_03
 // Object: Road Markings
 // Created by: Ashik
@@ -661,8 +807,6 @@ void drawRoadMarkings()
         glEnd();
     }
 }
-
-
 
 // OBJECT ID: OBJ_CITY_04
 // Object: City Sidewalk
@@ -688,7 +832,6 @@ void drawCitySidewalk()
 
     glEnd();
 }
-
 
 // OBJECT ID: OBJ_CITY_05
 // Object: AIUB Academic Building
@@ -2065,29 +2208,28 @@ void drawBridge()
 
     glEnd();
 
-    // LOWER RAILING POSTS
-    for (int x = 710; x <= 890; x += 30)
-    {
-        glBegin(GL_QUADS);
-
-            glVertex2f(x, 43);
-            glVertex2f(x + 4, 43);
-            glVertex2f(x + 4, 57);
-            glVertex2f(x, 57);
-
-        glEnd();
-    }
-
-
-    // Lower horizontal railing
+// LOWER RAILING POSTS
+for (int x = 710; x <= 890; x += 30)
+{
     glBegin(GL_QUADS);
 
-        glVertex2f(705, 40);
-        glVertex2f(895, 40);
-        glVertex2f(895, 45);
-        glVertex2f(705, 45);
+        glVertex2f(x, 68);
+        glVertex2f(x + 4, 68);
+        glVertex2f(x + 4, 92);
+        glVertex2f(x, 92);
 
     glEnd();
+}
+
+// Lower horizontal railing
+glBegin(GL_QUADS);
+
+    glVertex2f(705, 88);
+    glVertex2f(895, 88);
+    glVertex2f(895, 94);
+    glVertex2f(705, 94);
+
+glEnd();
 
     // BRIDGE SUPPORT LEFT
     glColor3f(0.45f, 0.45f, 0.45f);
@@ -2188,20 +2330,29 @@ void drawTrafficSignal()
 
     glEnd();
 
-    // RED LIGHT
+// RED LIGHT
+if (trafficState == 0)
     glColor3f(0.90f, 0.10f, 0.10f);
+else
+    glColor3f(0.25f, 0.03f, 0.03f);
 
-    drawCircle(308, 303, 8);
+drawCircle(308, 303, 8);
 
-    // YELLOW LIGHT
+// YELLOW LIGHT
+if (trafficState == 2)
     glColor3f(1.0f, 0.75f, 0.10f);
+else
+    glColor3f(0.25f, 0.18f, 0.02f);
 
-    drawCircle(308, 282, 8);
+drawCircle(308, 282, 8);
 
-    // GREEN LIGHT
+// GREEN LIGHT
+if (trafficState == 1)
     glColor3f(0.10f, 0.75f, 0.20f);
+else
+    glColor3f(0.02f, 0.20f, 0.05f);
 
-    drawCircle(308, 261, 8);
+drawCircle(308, 261, 8);
 
     // POLE BASE
     glColor3f(0.30f, 0.30f, 0.30f);
@@ -2280,7 +2431,10 @@ void drawStreetLights()
 
 
         // Yellow light
-        glColor3f(1.0f, 0.82f, 0.20f);
+        if (sceneMode == 0)
+    glColor3f(0.30f, 0.30f, 0.25f);
+else
+    glColor3f(1.0f, 0.82f, 0.20f);
 
         glBegin(GL_QUADS);
 
@@ -2381,54 +2535,106 @@ void drawVillageHills()
     glEnd();
 
 
-    // Back distant hills
-    glColor3f(0.36f, 0.58f, 0.34f);
+// Back distant hills
+glColor3f(0.36f, 0.58f, 0.34f);
+
+glBegin(GL_TRIANGLES);
+
+    glVertex2f(850, 250);
+    glVertex2f(1030, 500);
+    glVertex2f(1210, 250);
+
+    glVertex2f(1020, 250);
+    glVertex2f(1230, 560);
+    glVertex2f(1440, 250);
+
+    glVertex2f(1220, 250);
+    glVertex2f(1460, 520);
+    glVertex2f(1680, 250);
+
+glEnd();
+
+
+// Front hills
+glColor3f(0.26f, 0.52f, 0.25f);
+
+glBegin(GL_TRIANGLES);
+
+    glVertex2f(870, 250);
+    glVertex2f(1080, 420);
+    glVertex2f(1290, 250);
+
+    glVertex2f(1140, 250);
+    glVertex2f(1390, 435);
+    glVertex2f(1620, 250);
+
+glEnd();
+
+// Small hill highlights
+glColor3f(0.44f, 0.66f, 0.38f);
+
+glBegin(GL_TRIANGLES);
+
+    glVertex2f(900, 250);
+    glVertex2f(1030, 360);
+    glVertex2f(1160, 250);
+
+    glVertex2f(1250, 250);
+    glVertex2f(1430, 375);
+    glVertex2f(1600, 250);
+
+glEnd();
+}
+
+// Hills between city and village beside the river
+// Created by: Ashik
+
+void drawRiverSideHills()
+{
+    // Back hill
+    glColor3f(0.40f, 0.60f, 0.38f);
 
     glBegin(GL_TRIANGLES);
 
+        glVertex2f(700, 250);
+        glVertex2f(800, 390);
         glVertex2f(900, 250);
-        glVertex2f(1030, 430);
-        glVertex2f(1160, 250);
 
-        glVertex2f(1050, 250);
-        glVertex2f(1210, 470);
-        glVertex2f(1370, 250);
-
-        glVertex2f(1260, 250);
-        glVertex2f(1430, 420);
-        glVertex2f(1600, 250);
+        glVertex2f(800, 250);
+        glVertex2f(930, 430);
+        glVertex2f(1060, 250);
 
     glEnd();
 
 
     // Front hills
-    glColor3f(0.26f, 0.52f, 0.25f);
+    glColor3f(0.30f, 0.52f, 0.28f);
 
     glBegin(GL_TRIANGLES);
 
-        glVertex2f(900, 250);
-        glVertex2f(1110, 380);
-        glVertex2f(1300, 250);
+        glVertex2f(720, 250);
+        glVertex2f(790, 330);
+        glVertex2f(860, 250);
 
-        glVertex2f(1170, 250);
-        glVertex2f(1390, 390);
-        glVertex2f(1600, 250);
+        glVertex2f(860, 250);
+        glVertex2f(950, 350);
+        glVertex2f(1040, 250);
 
     glEnd();
 
 
-    // Small hill highlights
-    glColor3f(0.44f, 0.66f, 0.38f);
+    // Small light hills
+    glColor3f(0.46f, 0.67f, 0.40f);
 
     glBegin(GL_TRIANGLES);
 
-        glVertex2f(970, 250);
-        glVertex2f(1030, 330);
-        glVertex2f(1090, 250);
+        glVertex2f(750, 250);
+        glVertex2f(800, 300);
+        glVertex2f(850, 250);
 
-        glVertex2f(1330, 250);
-        glVertex2f(1430, 340);
-        glVertex2f(1520, 250);
+        glVertex2f(910, 250);
+        glVertex2f(950, 310);
+        glVertex2f(1000, 250);
 
     glEnd();
 }
@@ -2486,7 +2692,6 @@ void drawVillageBackgroundTrees()
     }
 }
 
-
 // Village Background Pine Trees
 // Created by: Ashik
 
@@ -2534,7 +2739,6 @@ void drawVillagePineTrees()
     // PINE TREE 2
     // Taller
 
-
     glColor3f(0.35f, 0.20f, 0.10f);
 
     glBegin(GL_QUADS);
@@ -2570,7 +2774,6 @@ void drawVillagePineTrees()
 
     // PINE TREE 3
     // Medium
-
 
     glColor3f(0.35f, 0.20f, 0.10f);
 
@@ -2643,11 +2846,9 @@ void drawVillagePineTrees()
     glEnd();
 }
 
-
 // OBJECT ID: OBJ_VILLAGE_01
 // Object: Traditional Mud House
 // Created by: Roni
-
 void drawMudHouse()
 {
     // Main mud wall
@@ -2655,10 +2856,10 @@ void drawMudHouse()
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1030, 250);
-        glVertex2f(1180, 250);
-        glVertex2f(1180, 350);
-        glVertex2f(1030, 350);
+        glVertex2f(980, 250);
+        glVertex2f(1130, 250);
+        glVertex2f(1130, 350);
+        glVertex2f(980, 350);
 
     glEnd();
 
@@ -2667,55 +2868,51 @@ void drawMudHouse()
 
     glBegin(GL_TRIANGLES);
 
-        glVertex2f(1010, 350);
-        glVertex2f(1105, 425);
-        glVertex2f(1200, 350);
+        glVertex2f(960, 350);
+        glVertex2f(1055, 425);
+        glVertex2f(1150, 350);
 
     glEnd();
-
 
     // Roof lower edge
     glColor3f(0.30f, 0.16f, 0.08f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1015, 345);
-        glVertex2f(1195, 345);
-        glVertex2f(1190, 355);
-        glVertex2f(1020, 355);
+        glVertex2f(965, 345);
+        glVertex2f(1145, 345);
+        glVertex2f(1140, 355);
+        glVertex2f(970, 355);
 
     glEnd();
-
 
     // Main door
     glColor3f(0.28f, 0.15f, 0.07f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1085, 250);
-        glVertex2f(1125, 250);
-        glVertex2f(1125, 320);
-        glVertex2f(1085, 320);
+        glVertex2f(1035, 250);
+        glVertex2f(1075, 250);
+        glVertex2f(1075, 320);
+        glVertex2f(1035, 320);
 
     glEnd();
-
 
     // Door inner panel
     glColor3f(0.38f, 0.22f, 0.10f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1091, 258);
-        glVertex2f(1119, 258);
-        glVertex2f(1119, 312);
-        glVertex2f(1091, 312);
+        glVertex2f(1041, 258);
+        glVertex2f(1069, 258);
+        glVertex2f(1069, 312);
+        glVertex2f(1041, 312);
 
     glEnd();
 
-
     // Door handle
     glColor3f(0.90f, 0.72f, 0.20f);
-    drawCircle(1113, 284, 3);
+    drawCircle(1063, 284, 3);
 
 
     // Left window
@@ -2723,10 +2920,10 @@ void drawMudHouse()
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1045, 285);
-        glVertex2f(1075, 285);
-        glVertex2f(1075, 315);
-        glVertex2f(1045, 315);
+        glVertex2f(995, 285);
+        glVertex2f(1025, 285);
+        glVertex2f(1025, 315);
+        glVertex2f(995, 315);
 
     glEnd();
 
@@ -2734,13 +2931,12 @@ void drawMudHouse()
     // Right window
     glBegin(GL_QUADS);
 
-        glVertex2f(1135, 285);
-        glVertex2f(1160, 285);
-        glVertex2f(1160, 315);
-        glVertex2f(1135, 315);
+        glVertex2f(1085, 285);
+        glVertex2f(1110, 285);
+        glVertex2f(1110, 315);
+        glVertex2f(1085, 315);
 
     glEnd();
-
 
     // Window frames
     glColor3f(0.72f, 0.52f, 0.27f);
@@ -2748,36 +2944,32 @@ void drawMudHouse()
     glBegin(GL_LINES);
 
         // Left
-        glVertex2f(1060, 285);
-        glVertex2f(1060, 315);
+        glVertex2f(1010, 285);
+        glVertex2f(1010, 315);
 
-        glVertex2f(1045, 300);
-        glVertex2f(1075, 300);
+        glVertex2f(995, 300);
+        glVertex2f(1025, 300);
 
         // Right
-        glVertex2f(1147, 285);
-        glVertex2f(1147, 315);
+        glVertex2f(1097, 285);
+        glVertex2f(1097, 315);
 
-        glVertex2f(1135, 300);
-        glVertex2f(1160, 300);
+        glVertex2f(1085, 300);
+        glVertex2f(1110, 300);
 
     glEnd();
-
-
     // Bottom base
     glColor3f(0.42f, 0.28f, 0.14f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1025, 245);
-        glVertex2f(1185, 245);
-        glVertex2f(1185, 253);
-        glVertex2f(1025, 253);
+        glVertex2f(975, 245);
+        glVertex2f(1135, 245);
+        glVertex2f(1135, 253);
+        glVertex2f(975, 253);
 
     glEnd();
 }
-
-
 
 // OBJECT ID: OBJ_VILLAGE_02
 // Object: Traditional Tin House
@@ -2790,10 +2982,10 @@ void drawTinHouse()
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1230, 250);
-        glVertex2f(1380, 250);
-        glVertex2f(1380, 345);
-        glVertex2f(1230, 345);
+        glVertex2f(1180, 250);
+        glVertex2f(1330, 250);
+        glVertex2f(1330, 345);
+        glVertex2f(1180, 345);
 
     glEnd();
 
@@ -2802,67 +2994,62 @@ void drawTinHouse()
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1210, 345);
-        glVertex2f(1400, 345);
-        glVertex2f(1370, 390);
-        glVertex2f(1240, 390);
+        glVertex2f(1160, 345);
+        glVertex2f(1350, 345);
+        glVertex2f(1320, 390);
+        glVertex2f(1190, 390);
 
     glEnd();
-
 
     // Roof light strip
     glColor3f(0.62f, 0.70f, 0.72f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1225, 352);
-        glVertex2f(1385, 352);
-        glVertex2f(1378, 360);
-        glVertex2f(1232, 360);
+        glVertex2f(1175, 352);
+        glVertex2f(1335, 352);
+        glVertex2f(1328, 360);
+        glVertex2f(1182, 360);
 
     glEnd();
-
 
     // Main door
     glColor3f(0.32f, 0.22f, 0.14f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1285, 250);
-        glVertex2f(1325, 250);
-        glVertex2f(1325, 315);
-        glVertex2f(1285, 315);
+        glVertex2f(1235, 250);
+        glVertex2f(1275, 250);
+        glVertex2f(1275, 315);
+        glVertex2f(1235, 315);
 
     glEnd();
-
 
     // Door inner shade
     glColor3f(0.42f, 0.30f, 0.18f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1291, 258);
-        glVertex2f(1319, 258);
-        glVertex2f(1319, 307);
-        glVertex2f(1291, 307);
+        glVertex2f(1241, 258);
+        glVertex2f(1269, 258);
+        glVertex2f(1269, 307);
+        glVertex2f(1241, 307);
 
     glEnd();
 
-
     // Door handle
     glColor3f(0.90f, 0.72f, 0.20f);
-    drawCircle(1313, 282, 3);
-
+    drawCircle(1263, 282, 3);
 
     // Left window
     glColor3f(0.20f, 0.38f, 0.42f);
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1245, 285);
-        glVertex2f(1272, 285);
-        glVertex2f(1272, 315);
-        glVertex2f(1245, 315);
+        glVertex2f(1195, 285);
+        glVertex2f(1222, 285);
+        glVertex2f(1222, 315);
+        glVertex2f(1195, 315);
 
     glEnd();
 
@@ -2870,10 +3057,10 @@ void drawTinHouse()
     // Right window
     glBegin(GL_QUADS);
 
-        glVertex2f(1335, 285);
-        glVertex2f(1362, 285);
-        glVertex2f(1362, 315);
-        glVertex2f(1335, 315);
+        glVertex2f(1285, 285);
+        glVertex2f(1312, 285);
+        glVertex2f(1312, 315);
+        glVertex2f(1285, 315);
 
     glEnd();
 
@@ -2883,18 +3070,20 @@ void drawTinHouse()
 
     glBegin(GL_LINES);
 
-        glVertex2f(1258, 285);
-        glVertex2f(1258, 315);
+        // Left
+        glVertex2f(1208, 285);
+        glVertex2f(1208, 315);
 
-        glVertex2f(1245, 300);
-        glVertex2f(1272, 300);
+        glVertex2f(1195, 300);
+        glVertex2f(1222, 300);
 
 
-        glVertex2f(1348, 285);
-        glVertex2f(1348, 315);
+        // Right
+        glVertex2f(1298, 285);
+        glVertex2f(1298, 315);
 
-        glVertex2f(1335, 300);
-        glVertex2f(1362, 300);
+        glVertex2f(1285, 300);
+        glVertex2f(1312, 300);
 
     glEnd();
 
@@ -2904,19 +3093,16 @@ void drawTinHouse()
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1225, 245);
-        glVertex2f(1385, 245);
-        glVertex2f(1385, 253);
-        glVertex2f(1225, 253);
+        glVertex2f(1175, 245);
+        glVertex2f(1335, 245);
+        glVertex2f(1335, 253);
+        glVertex2f(1175, 253);
 
     glEnd();
 }
-
-
 // OBJECT ID: OBJ_VILLAGE_03
 // Object: Traditional Windmill
 // Created by: Roni
-
 void drawWindmill()
 {
     // Tower
@@ -2924,60 +3110,56 @@ void drawWindmill()
 
     glBegin(GL_QUADS);
 
-        glVertex2f(1160, 250);
-        glVertex2f(1200, 250);
-        glVertex2f(1190, 400);
-        glVertex2f(1170, 400);
+        glVertex2f(1130, 250);
+        glVertex2f(1170, 250);
+        glVertex2f(1160, 400);
+        glVertex2f(1140, 400);
 
     glEnd();
-
 
     // Top cap
     glColor3f(0.35f, 0.20f, 0.10f);
 
     glBegin(GL_TRIANGLES);
 
-        glVertex2f(1155, 400);
-        glVertex2f(1180, 435);
-        glVertex2f(1205, 400);
+        glVertex2f(1125, 400);
+        glVertex2f(1150, 435);
+        glVertex2f(1175, 400);
 
     glEnd();
 
-
     // Center hub
     glColor3f(0.25f, 0.25f, 0.25f);
-    drawCircle(1180, 400, 10);
-
+    drawCircle(1150, 400, 10);
 
     glPushMatrix();
 
-    glTranslatef(1180, 400, 0);
+    glTranslatef(1150, 400, 0);
     glRotatef(windmillAngle, 0, 0, 1);
-    glTranslatef(-1180, -400, 0);
+    glTranslatef(-1150, -400, 0);
+
 
     // Blade 1 (Vertical)
     glLineWidth(4);
 
     glBegin(GL_LINES);
 
-        glVertex2f(1180, 400);
-        glVertex2f(1180, 480);
+        glVertex2f(1150, 400);
+        glVertex2f(1150, 480);
 
-        glVertex2f(1180, 400);
-        glVertex2f(1180, 320);
+        glVertex2f(1150, 400);
+        glVertex2f(1150, 320);
 
     glEnd();
 
-
     // Blade 2 (Horizontal)
-
     glBegin(GL_LINES);
 
-        glVertex2f(1100, 400);
-        glVertex2f(1180, 400);
+        glVertex2f(1070, 400);
+        glVertex2f(1150, 400);
 
-        glVertex2f(1180, 400);
-        glVertex2f(1260, 400);
+        glVertex2f(1150, 400);
+        glVertex2f(1230, 400);
 
     glEnd();
 
@@ -2987,23 +3169,24 @@ void drawWindmill()
 
     glBegin(GL_TRIANGLES);
 
-        glVertex2f(1180, 480);
-        glVertex2f(1168, 450);
-        glVertex2f(1192, 450);
+        glVertex2f(1150, 480);
+        glVertex2f(1138, 450);
+        glVertex2f(1162, 450);
 
-        glVertex2f(1180, 320);
-        glVertex2f(1168, 350);
-        glVertex2f(1192, 350);
+        glVertex2f(1150, 320);
+        glVertex2f(1138, 350);
+        glVertex2f(1162, 350);
 
-        glVertex2f(1100, 400);
-        glVertex2f(1130, 388);
-        glVertex2f(1130, 412);
+        glVertex2f(1070, 400);
+        glVertex2f(1100, 388);
+        glVertex2f(1100, 412);
 
-        glVertex2f(1260, 400);
-        glVertex2f(1230, 388);
-        glVertex2f(1230, 412);
+        glVertex2f(1230, 400);
+        glVertex2f(1200, 388);
+        glVertex2f(1200, 412);
 
     glEnd();
+
     glPopMatrix();
 }
 
@@ -3271,21 +3454,21 @@ void drawPaddyField()
 
             glBegin(GL_LINES);
                 glVertex2f(x, y);
-                glVertex2f(x, y + 20);
+                glVertex2f(x + paddySway, y + 20);
 
                 glVertex2f(x, y + 9);
-                glVertex2f(x - 5, y + 15);
+                glVertex2f(x - 5 + paddySway, y + 15);
 
                 glVertex2f(x, y + 11);
-                glVertex2f(x + 5, y + 17);
+                glVertex2f(x + 5 + paddySway, y + 17);
             glEnd();
 
             // Golden paddy grains
             glColor3f(0.92f, 0.73f, 0.12f);
 
-            drawCircle(x - 3, y + 21, 1.8f);
-            drawCircle(x, y + 23, 1.8f);
-            drawCircle(x + 3, y + 21, 1.8f);
+            drawCircle(x - 3 + paddySway, y + 21, 1.8f);
+            drawCircle(x + paddySway, y + 23, 1.8f);
+            drawCircle(x + 3 + paddySway, y + 21, 1.8f);
         }
     }
 
@@ -3364,71 +3547,18 @@ void drawBambooFence()
 
     glLineWidth(1);
 }
-// OBJECT ID: OBJ_VILLAGE_08
-// Object: Village Pond
-// Created by: Shajia
-
-void drawVillagePond()
-{
-    // Pond outer bank
-    glColor3f(0.30f, 0.55f, 0.18f);
-
-    glBegin(GL_POLYGON);
-        glVertex2f(930, 195);
-        glVertex2f(960, 180);
-        glVertex2f(1030, 175);
-        glVertex2f(1090, 185);
-        glVertex2f(1110, 210);
-        glVertex2f(1090, 235);
-        glVertex2f(1025, 245);
-        glVertex2f(960, 238);
-        glVertex2f(930, 220);
-    glEnd();
-
-    // Pond water
-    glColor3f(0.12f, 0.58f, 0.82f);
-
-    glBegin(GL_POLYGON);
-        glVertex2f(945, 200);
-        glVertex2f(970, 188);
-        glVertex2f(1028, 184);
-        glVertex2f(1080, 192);
-        glVertex2f(1095, 210);
-        glVertex2f(1078, 226);
-        glVertex2f(1025, 235);
-        glVertex2f(970, 229);
-        glVertex2f(945, 216);
-    glEnd();
-
-    // Water details
-    glColor3f(0.72f, 0.88f, 0.95f);
-    glLineWidth(1);
-
-    glBegin(GL_LINES);
-        glVertex2f(965, 205);
-        glVertex2f(1005, 205);
-
-        glVertex2f(1030, 218);
-        glVertex2f(1070, 218);
-
-        glVertex2f(985, 225);
-        glVertex2f(1015, 225);
-    glEnd();
-
-    // Lily pads
-    glColor3f(0.12f, 0.45f, 0.14f);
-
-    drawCircle(980, 215, 6);
-    drawCircle(1045, 202, 7);
-    drawCircle(1065, 222, 5);
-}
 
 // OBJECT ID: OBJ_VILLAGE_08
 // Object: Hay Stack
 // Created by: Shajia
 
-void drawHayStack()
+void drawHayStack(float x)
 {
+    glPushMatrix();
+
+    // 1375 is the original starting X position
+    glTranslatef(x - 1375, 0, 0);
+
     // Main hay body
     glColor3f(0.82f, 0.60f, 0.16f);
 
@@ -3462,6 +3592,7 @@ void drawHayStack()
     glLineWidth(1);
 
     glBegin(GL_LINES);
+
         glVertex2f(1390, 270);
         glVertex2f(1430, 340);
 
@@ -3482,12 +3613,14 @@ void drawHayStack()
 
         glVertex2f(1405, 310);
         glVertex2f(1462, 310);
+
     glEnd();
 
     // Top straw
     glLineWidth(2);
 
     glBegin(GL_LINES);
+
         glVertex2f(1435, 360);
         glVertex2f(1425, 380);
 
@@ -3496,9 +3629,12 @@ void drawHayStack()
 
         glVertex2f(1435, 360);
         glVertex2f(1447, 379);
+
     glEnd();
 
     glLineWidth(1);
+
+    glPopMatrix();
 }
 
 // OBJECT ID: OBJ_CITY_05
@@ -3640,83 +3776,2132 @@ void drawCityBus(float x, float y, float s)
     drawCircle(x + 147 * s, y + 18 * s, 4 * s);
 }
 
+// Animal Farm Shed
+// Created by: Ashik
+
+void drawAnimalFarm()
+{
+    // Shed back wall
+    glColor3f(0.55f, 0.34f, 0.18f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1380, 250);
+        glVertex2f(1535, 250);
+        glVertex2f(1535, 325);
+        glVertex2f(1380, 325);
+    glEnd();
+
+    // Open dark area
+    glColor3f(0.20f, 0.14f, 0.08f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1400, 250);
+        glVertex2f(1515, 250);
+        glVertex2f(1515, 305);
+        glVertex2f(1400, 305);
+    glEnd();
+
+    // Roof
+    glColor3f(0.32f, 0.20f, 0.10f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1365, 325);
+        glVertex2f(1550, 325);
+        glVertex2f(1530, 355);
+        glVertex2f(1385, 355);
+    glEnd();
+
+    // Roof top layer
+    glColor3f(0.42f, 0.27f, 0.12f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1385, 355);
+        glVertex2f(1530, 355);
+        glVertex2f(1515, 370);
+        glVertex2f(1400, 370);
+    glEnd();
+
+    // Left wooden pillar
+    glColor3f(0.30f, 0.17f, 0.07f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1390, 245);
+        glVertex2f(1400, 245);
+        glVertex2f(1400, 330);
+        glVertex2f(1390, 330);
+    glEnd();
+
+    // Middle pillar
+    glBegin(GL_QUADS);
+        glVertex2f(1452, 245);
+        glVertex2f(1462, 245);
+        glVertex2f(1462, 330);
+        glVertex2f(1452, 330);
+    glEnd();
+
+    // Right pillar
+    glBegin(GL_QUADS);
+        glVertex2f(1515, 245);
+        glVertex2f(1525, 245);
+        glVertex2f(1525, 330);
+        glVertex2f(1515, 330);
+    glEnd();
+
+    // Ground inside farm
+    glColor3f(0.56f, 0.42f, 0.24f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1360, 220);
+        glVertex2f(1585, 220);
+        glVertex2f(1585, 250);
+        glVertex2f(1360, 250);
+    glEnd();
+
+    // Fence posts
+    glColor3f(0.45f, 0.27f, 0.10f);
+
+    for (int x = 1365; x <= 1580; x += 35)
+    {
+        glBegin(GL_QUADS);
+            glVertex2f(x, 205);
+            glVertex2f(x + 5, 205);
+            glVertex2f(x + 5, 245);
+            glVertex2f(x, 245);
+        glEnd();
+    }
+
+    // Fence horizontal bars
+    glBegin(GL_QUADS);
+        glVertex2f(1360, 215);
+        glVertex2f(1585, 215);
+        glVertex2f(1585, 221);
+        glVertex2f(1360, 221);
+
+        glVertex2f(1360, 235);
+        glVertex2f(1585, 235);
+        glVertex2f(1585, 241);
+        glVertex2f(1360, 241);
+    glEnd();
+
+    // Feeding trough
+    glColor3f(0.38f, 0.22f, 0.08f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(1430, 225);
+        glVertex2f(1490, 225);
+        glVertex2f(1482, 238);
+        glVertex2f(1438, 238);
+    glEnd();
+}
+
+// Small Chicken
+// Created by: Ashik
+
+void drawChicken(float x, float y, float s)
+{
+    // Body
+    glColor3f(0.95f, 0.85f, 0.55f);
+    drawCircle(x, y, 10 * s);
+
+    // Head
+    drawCircle(x + 9 * s, y + 8 * s, 6 * s);
+
+    // Wing
+    glColor3f(0.80f, 0.60f, 0.30f);
+    drawCircle(x - 2 * s, y + 1 * s, 5 * s);
+
+    // Eye
+    glColor3f(0.05f, 0.05f, 0.05f);
+    drawCircle(x + 11 * s, y + 10 * s, 1.2f * s);
+
+    // Beak
+    glColor3f(1.0f, 0.55f, 0.10f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(x + 15 * s, y + 8 * s);
+        glVertex2f(x + 21 * s, y + 10 * s);
+        glVertex2f(x + 15 * s, y + 12 * s);
+    glEnd();
+
+    // Comb
+    glColor3f(0.90f, 0.10f, 0.10f);
+    drawCircle(x + 6 * s, y + 15 * s, 2.5f * s);
+    drawCircle(x + 10 * s, y + 16 * s, 2.5f * s);
+
+    // Legs
+    glColor3f(0.80f, 0.45f, 0.10f);
+
+    glBegin(GL_LINES);
+        glVertex2f(x - 2 * s, y - 9 * s);
+        glVertex2f(x - 2 * s, y - 16 * s);
+
+        glVertex2f(x + 4 * s, y - 9 * s);
+        glVertex2f(x + 4 * s, y - 16 * s);
+    glEnd();
+}
+
+void drawSmallHayStack(float x, float y, float s)
+{
+    // Main hay
+    glColor3f(0.82f, 0.60f, 0.16f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(x, y);
+        glVertex2f(x + 8 * s, y + 25 * s);
+        glVertex2f(x + 20 * s, y + 50 * s);
+        glVertex2f(x + 35 * s, y + 70 * s);
+        glVertex2f(x + 50 * s, y + 50 * s);
+        glVertex2f(x + 62 * s, y + 25 * s);
+        glVertex2f(x + 70 * s, y);
+    glEnd();
+
+    // Light hay layer
+    glColor3f(0.92f, 0.70f, 0.22f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(x + 10 * s, y);
+        glVertex2f(x + 35 * s, y + 60 * s);
+        glVertex2f(x + 58 * s, y);
+    glEnd();
+
+    // Hay lines
+    glColor3f(0.55f, 0.36f, 0.08f);
+    glLineWidth(1.5f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(x + 15 * s, y + 8 * s);
+        glVertex2f(x + 35 * s, y + 60 * s);
+
+        glVertex2f(x + 30 * s, y + 5 * s);
+        glVertex2f(x + 40 * s, y + 55 * s);
+
+        glVertex2f(x + 48 * s, y + 8 * s);
+        glVertex2f(x + 38 * s, y + 58 * s);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+
+void drawFarmChickens()
+{
+    drawChicken(1385, 265, 0.70f);
+    drawChicken(1420, 270, 0.60f);
+    drawChicken(1460, 260, 0.75f);
+    drawChicken(1500, 268, 0.62f);
+    drawChicken(1540, 260, 0.68f);
+}
+
+// OBJECT ID: OBJ_VILLAGE_09
+// Object: Wooden Village House
+// Created by: Ashik
+void drawWoodenVillageHouse()
+{
+    // Raised platform
+    glColor3f(0.35f, 0.20f, 0.08f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(885, 250);
+        glVertex2f(975, 250);
+        glVertex2f(975, 258);
+        glVertex2f(885, 258);
+    glEnd();
+
+    // Main wooden wall
+    glColor3f(0.66f, 0.43f, 0.22f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(892, 258);
+        glVertex2f(968, 258);
+        glVertex2f(968, 325);
+        glVertex2f(892, 325);
+    glEnd();
+
+    // Roof
+    glColor3f(0.32f, 0.16f, 0.06f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(878, 325);
+        glVertex2f(930, 372);
+        glVertex2f(982, 325);
+    glEnd();
+
+    // Door
+    glColor3f(0.22f, 0.12f, 0.05f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(918, 258);
+        glVertex2f(942, 258);
+        glVertex2f(942, 305);
+        glVertex2f(918, 305);
+    glEnd();
+
+    // Windows
+    glColor3f(0.45f, 0.70f, 0.72f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(900, 282);
+        glVertex2f(914, 282);
+        glVertex2f(914, 300);
+        glVertex2f(900, 300);
+
+        glVertex2f(946, 282);
+        glVertex2f(960, 282);
+        glVertex2f(960, 300);
+        glVertex2f(946, 300);
+
+    glEnd();
+
+    // Wooden support legs
+    glColor3f(0.30f, 0.18f, 0.07f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(900, 238);
+        glVertex2f(907, 238);
+        glVertex2f(907, 258);
+        glVertex2f(900, 258);
+
+        glVertex2f(952, 238);
+        glVertex2f(959, 238);
+        glVertex2f(959, 258);
+        glVertex2f(952, 258);
+
+    glEnd();
+
+    // Front stairs
+    glColor3f(0.48f, 0.30f, 0.12f);
+
+    glBegin(GL_QUADS);
+
+        glVertex2f(912, 245);
+        glVertex2f(948, 245);
+        glVertex2f(948, 252);
+        glVertex2f(912, 252);
+
+        glVertex2f(918, 238);
+        glVertex2f(942, 238);
+        glVertex2f(942, 245);
+        glVertex2f(918, 245);
+
+    glEnd();
+}
+
+// OBJECT ID: OBJ_VILLAGE_10
+// Object: Additional Village Trees
+// Created by: Mostafiz
+
+void drawAdditionalVillageTrees()
+{
+    drawVillageTree(905, 250, 0.52f);
+    drawVillageTree(1150, 250, 0.48f);
+    drawVillageTree(1350, 250, 0.55f);
+    drawVillageTree(1550, 250, 0.58f);
+    drawVillageTree(700, 250, 0.58f);
+    drawVillageTree(755, 250, 0.52f);
+    drawVillageTree(850, 250, 0.48f);
+    drawVillageTree(800, 250, 0.55f);
+}
+
+// OBJECT ID: OBJ_VILLAGE_12
+// Object: Banana Tree
+// Created by: Apon
+
+void drawBananaTree(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+
+    // Keep normal width but make the tree shorter
+    glScalef(s, s * 0.82f, 1);
+
+    // Trunk
+    glColor3f(0.55f, 0.42f, 0.20f);
+    glBegin(GL_QUADS);
+        glVertex2f(-7, 0);
+        glVertex2f(7, 0);
+        glVertex2f(5, 90);
+        glVertex2f(-5, 90);
+    glEnd();
+
+    // Left wide leaf
+    glColor3f(0.16f, 0.52f, 0.18f);
+    glBegin(GL_POLYGON);
+        glVertex2f(0, 88);
+        glVertex2f(-18, 105);
+        glVertex2f(-55, 118);
+        glVertex2f(-88, 112);
+        glVertex2f(-55, 100);
+        glVertex2f(-15, 92);
+    glEnd();
+
+    // Right wide leaf
+    glColor3f(0.20f, 0.60f, 0.22f);
+    glBegin(GL_POLYGON);
+        glVertex2f(0, 90);
+        glVertex2f(18, 108);
+        glVertex2f(58, 124);
+        glVertex2f(92, 118);
+        glVertex2f(58, 104);
+        glVertex2f(18, 94);
+    glEnd();
+
+    // Top leaf
+    glColor3f(0.13f, 0.48f, 0.16f);
+    glBegin(GL_POLYGON);
+        glVertex2f(0, 90);
+        glVertex2f(-8, 115);
+        glVertex2f(-12, 150);
+        glVertex2f(0, 168);
+        glVertex2f(10, 145);
+        glVertex2f(8, 112);
+    glEnd();
+
+    // Upper left leaf
+    glColor3f(0.18f, 0.56f, 0.20f);
+    glBegin(GL_POLYGON);
+        glVertex2f(0, 92);
+        glVertex2f(-20, 102);
+        glVertex2f(-42, 135);
+        glVertex2f(-38, 158);
+        glVertex2f(-18, 135);
+        glVertex2f(-5, 108);
+    glEnd();
+
+    // Upper right leaf
+    glColor3f(0.15f, 0.52f, 0.18f);
+    glBegin(GL_POLYGON);
+        glVertex2f(0, 92);
+        glVertex2f(22, 104);
+        glVertex2f(45, 135);
+        glVertex2f(40, 158);
+        glVertex2f(20, 135);
+        glVertex2f(5, 108);
+    glEnd();
+
+    // Banana bunch
+    glColor3f(0.92f, 0.78f, 0.10f);
+    drawCircle(-8, 82, 5);
+    drawCircle(0, 80, 5);
+    drawCircle(8, 82, 5);
+    drawCircle(-4, 74, 5);
+    drawCircle(5, 73, 5);
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_VILLAGE_13
+// Object: Small Vegetable Garden
+// Created by: Rony
+
+void drawVegetableGarden(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Garden soil
+    glColor3f(0.45f, 0.28f, 0.12f);
+    glBegin(GL_QUADS);
+        glVertex2f(0, 0);
+        glVertex2f(150, 0);
+        glVertex2f(140, 55);
+        glVertex2f(10, 55);
+    glEnd();
+
+    // Three crop rows
+    glColor3f(0.30f, 0.18f, 0.08f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(15, 8);
+        glVertex2f(40, 8);
+        glVertex2f(45, 48);
+        glVertex2f(22, 48);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(62, 8);
+        glVertex2f(87, 8);
+        glVertex2f(87, 48);
+        glVertex2f(64, 48);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(110, 8);
+        glVertex2f(135, 8);
+        glVertex2f(128, 48);
+        glVertex2f(105, 48);
+    glEnd();
+
+    // Vegetable plants
+    glColor3f(0.10f, 0.55f, 0.12f);
+
+    drawCircle(28, 18, 7);
+    drawCircle(32, 34, 7);
+
+    drawCircle(74, 18, 7);
+    drawCircle(75, 35, 7);
+
+    drawCircle(122, 18, 7);
+    drawCircle(116, 35, 7);
+
+    // Small vegetables / tomatoes
+    glColor3f(0.85f, 0.12f, 0.08f);
+
+    drawCircle(28, 20, 3);
+    drawCircle(34, 35, 3);
+
+    drawCircle(72, 20, 3);
+    drawCircle(78, 36, 3);
+
+    drawCircle(120, 20, 3);
+    drawCircle(115, 36, 3);
+
+    // Bamboo fence posts
+    glColor3f(0.58f, 0.40f, 0.18f);
+    glLineWidth(4.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(0, 0);
+        glVertex2f(0, 70);
+
+        glVertex2f(50, 0);
+        glVertex2f(50, 70);
+
+        glVertex2f(100, 0);
+        glVertex2f(100, 70);
+
+        glVertex2f(150, 0);
+        glVertex2f(150, 70);
+
+        // Horizontal bamboo
+        glVertex2f(0, 20);
+        glVertex2f(150, 20);
+
+        glVertex2f(0, 52);
+        glVertex2f(150, 52);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_RIVER_01
+// Object: Wooden River Boat
+// Created by: Mostafiz
+
+void drawWoodenBoat(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Main wooden body
+    glColor3f(0.48f, 0.25f, 0.08f);
+    glBegin(GL_POLYGON);
+        glVertex2f(-75, 15);
+        glVertex2f(-55, -10);
+        glVertex2f(45, -10);
+        glVertex2f(75, 15);
+        glVertex2f(55, 5);
+        glVertex2f(-55, 5);
+    glEnd();
+
+    // Upper edge
+    glColor3f(0.30f, 0.15f, 0.05f);
+    glBegin(GL_QUADS);
+        glVertex2f(-58, 5);
+        glVertex2f(58, 5);
+        glVertex2f(52, 12);
+        glVertex2f(-52, 12);
+    glEnd();
+
+    // Inside of boat
+    glColor3f(0.25f, 0.13f, 0.05f);
+    glBegin(GL_QUADS);
+        glVertex2f(-42, 12);
+        glVertex2f(42, 12);
+        glVertex2f(32, 20);
+        glVertex2f(-32, 20);
+    glEnd();
+
+    // Wooden seats
+    glColor3f(0.68f, 0.42f, 0.16f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(-30, 10);
+        glVertex2f(-20, 10);
+        glVertex2f(-16, 20);
+        glVertex2f(-27, 20);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(18, 10);
+        glVertex2f(28, 10);
+        glVertex2f(25, 20);
+        glVertex2f(14, 20);
+    glEnd();
+
+    // Oar
+    glColor3f(0.42f, 0.24f, 0.09f);
+    glLineWidth(5.0f);
+
+    glBegin(GL_LINES);
+        glVertex2f(5, 18);
+        glVertex2f(58, -22);
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    // Oar blade
+    glColor3f(0.55f, 0.32f, 0.12f);
+    glBegin(GL_POLYGON);
+        glVertex2f(52, -18);
+        glVertex2f(65, -30);
+        glVertex2f(72, -25);
+        glVertex2f(60, -14);
+    glEnd();
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_RIVER_02
+// Object: River Bank Decoration
+// Created by: Ashik
+
+void drawRiverBankDecoration(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Rocks
+
+    glColor3f(0.42f, 0.43f, 0.40f);
+    drawCircle(-35, 3, 12);
+
+    glColor3f(0.50f, 0.50f, 0.46f);
+    drawCircle(-18, 2, 9);
+
+    glColor3f(0.36f, 0.38f, 0.35f);
+    drawCircle(-48, 1, 7);
+
+    // Left Bush
+
+    glColor3f(0.10f, 0.42f, 0.12f);
+    drawCircle(10, 10, 14);
+    drawCircle(25, 14, 18);
+    drawCircle(42, 10, 14);
+
+    glColor3f(0.16f, 0.52f, 0.16f);
+    drawCircle(20, 22, 12);
+    drawCircle(35, 22, 11);
+
+    // Tall River Grass / Reeds
+
+    glColor3f(0.16f, 0.40f, 0.10f);
+    glLineWidth(3.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(65, 0);
+        glVertex2f(60, 42);
+
+        glVertex2f(73, 0);
+        glVertex2f(75, 50);
+
+        glVertex2f(82, 0);
+        glVertex2f(88, 38);
+
+        glVertex2f(92, 0);
+        glVertex2f(95, 47);
+
+        glVertex2f(102, 0);
+        glVertex2f(108, 35);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    // Reed Tops
+
+    glColor3f(0.40f, 0.25f, 0.08f);
+
+    drawCircle(60, 43, 4);
+    drawCircle(75, 51, 4);
+    drawCircle(88, 39, 4);
+    drawCircle(95, 48, 4);
+    drawCircle(108, 36, 4);
+
+    // Small Grass
+
+    glColor3f(0.12f, 0.48f, 0.10f);
+    glLineWidth(2.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(120, 0);
+        glVertex2f(115, 20);
+
+        glVertex2f(120, 0);
+        glVertex2f(121, 24);
+
+        glVertex2f(120, 0);
+        glVertex2f(127, 18);
+
+        glVertex2f(140, 0);
+        glVertex2f(135, 18);
+
+        glVertex2f(140, 0);
+        glVertex2f(141, 23);
+
+        glVertex2f(140, 0);
+        glVertex2f(147, 17);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_ENV_01
+// Object: Flying Birds
+// Created by: Shajia
+
+void drawSingleBird(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Body
+    glColor3f(0.10f, 0.10f, 0.10f);
+    glBegin(GL_POLYGON);
+        glVertex2f(-10, 0);
+        glVertex2f(-3, 4);
+        glVertex2f(8, 4);
+        glVertex2f(15, 1);
+        glVertex2f(8, -3);
+        glVertex2f(-3, -4);
+    glEnd();
+
+    // Head
+    drawCircle(14, 2, 4);
+
+    // Beak
+    glColor3f(0.85f, 0.55f, 0.08f);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(18, 3);
+        glVertex2f(25, 1);
+        glVertex2f(18, 0);
+    glEnd();
+
+    // Left wing
+    glColor3f(0.16f, 0.16f, 0.16f);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(2, 2);
+        glVertex2f(-12, 17);
+        glVertex2f(8, 5);
+    glEnd();
+
+    // Right wing
+    glBegin(GL_TRIANGLES);
+        glVertex2f(3, 0);
+        glVertex2f(-5, -15);
+        glVertex2f(10, -3);
+    glEnd();
+
+    // Tail
+    glBegin(GL_TRIANGLES);
+        glVertex2f(-8, 2);
+        glVertex2f(-19, 8);
+        glVertex2f(-13, 0);
+
+        glVertex2f(-8, -2);
+        glVertex2f(-19, -7);
+        glVertex2f(-13, 0);
+    glEnd();
+
+    glPopMatrix();
+}
+// OBJECT ID: OBJ_ENV_01
+// Object: Flying Birds
+// Created by: Shajia
+
+void drawBirds()
+{
+    glPushMatrix();
+
+    // Whole bird group movement
+    float groupWave = sin(birdWave) * 5.0f;
+    glTranslatef(birdMove, groupWave, 0);
+
+    // Single birds
+    drawSingleBird(130, 545 + sin(birdWave + 0.2f) * 6.0f, 0.55f);
+    drawSingleBird(430, 610 + sin(birdWave + 0.8f) * 5.0f, 0.50f);
+    drawSingleBird(820, 560 + sin(birdWave + 1.3f) * 7.0f, 0.62f);
+    drawSingleBird(1510, 600 + sin(birdWave + 1.9f) * 5.0f, 0.52f);
+
+    // Flock 1 - City side
+    drawSingleBird(250, 520 + sin(birdWave + 0.1f) * 4.0f, 0.60f);
+    drawSingleBird(285, 545 + sin(birdWave + 0.5f) * 6.0f, 0.52f);
+    drawSingleBird(320, 522 + sin(birdWave + 0.9f) * 5.0f, 0.58f);
+
+    // Flock 2 - Center sky
+    drawSingleBird(650, 600 + sin(birdWave + 0.3f) * 5.0f, 0.55f);
+    drawSingleBird(690, 625 + sin(birdWave + 0.7f) * 6.0f, 0.48f);
+    drawSingleBird(730, 600 + sin(birdWave + 1.1f) * 4.0f, 0.53f);
+    drawSingleBird(770, 620 + sin(birdWave + 1.5f) * 5.0f, 0.45f);
+
+    // Flock 3 - Village side
+    drawSingleBird(1080, 525 + sin(birdWave + 0.4f) * 6.0f, 0.62f);
+    drawSingleBird(1120, 550 + sin(birdWave + 0.8f) * 5.0f, 0.54f);
+    drawSingleBird(1160, 525 + sin(birdWave + 1.2f) * 4.0f, 0.60f);
+
+    // Flock 4 - Far village sky
+    drawSingleBird(1280, 615 + sin(birdWave + 0.2f) * 5.0f, 0.48f);
+    drawSingleBird(1320, 635 + sin(birdWave + 0.6f) * 6.0f, 0.42f);
+    drawSingleBird(1360, 612 + sin(birdWave + 1.0f) * 4.0f, 0.46f);
+
+    glPopMatrix();
+}
 // DISPLAY FUNCTION
+
+// OBJECT ID: OBJ_CITY_12
+// Object: City Sky Airplane
+// Created by: Mostafiz
+
+void drawAirplane(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Main body
+    glColor3f(0.88f, 0.90f, 0.92f);
+    glBegin(GL_POLYGON);
+        glVertex2f(-75, -8);
+        glVertex2f(-55, 8);
+        glVertex2f(45, 8);
+        glVertex2f(78, 0);
+        glVertex2f(45, -8);
+        glVertex2f(-55, -8);
+    glEnd();
+
+    // Nose
+    glColor3f(0.72f, 0.76f, 0.80f);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(45, 8);
+        glVertex2f(85, 0);
+        glVertex2f(45, -8);
+    glEnd();
+
+    // Upper wing
+    glColor3f(0.65f, 0.69f, 0.74f);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(-5, 7);
+        glVertex2f(25, 7);
+        glVertex2f(-25, 40);
+    glEnd();
+
+    // Lower wing
+    glColor3f(0.58f, 0.63f, 0.68f);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(-5, -7);
+        glVertex2f(25, -7);
+        glVertex2f(-20, -35);
+    glEnd();
+
+    // Tail wing
+    glColor3f(0.25f, 0.45f, 0.70f);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(-58, 7);
+        glVertex2f(-42, 7);
+        glVertex2f(-67, 30);
+    glEnd();
+
+    // Tail side
+    glBegin(GL_TRIANGLES);
+        glVertex2f(-65, 0);
+        glVertex2f(-45, 0);
+        glVertex2f(-72, 15);
+    glEnd();
+
+    // Cockpit window
+    glColor3f(0.12f, 0.30f, 0.42f);
+    glBegin(GL_POLYGON);
+        glVertex2f(43, 3);
+        glVertex2f(57, 2);
+        glVertex2f(64, 0);
+        glVertex2f(50, -1);
+    glEnd();
+
+    // Passenger windows
+    glColor3f(0.10f, 0.32f, 0.48f);
+
+    drawCircle(25, 1, 3);
+    drawCircle(12, 1, 3);
+    drawCircle(-1, 1, 3);
+    drawCircle(-14, 1, 3);
+    drawCircle(-27, 1, 3);
+    drawCircle(-40, 1, 3);
+
+    // Engine
+    glColor3f(0.38f, 0.42f, 0.46f);
+    glBegin(GL_QUADS);
+        glVertex2f(5, -11);
+        glVertex2f(25, -11);
+        glVertex2f(21, -20);
+        glVertex2f(8, -20);
+    glEnd();
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_CITY_13
+// Object: Hospital Ambulance
+// Created by: Apon
+
+void drawAmbulance(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Main ambulance body
+    glColor3f(0.94f, 0.94f, 0.92f);
+    glBegin(GL_QUADS);
+        glVertex2f(0, 15);
+        glVertex2f(115, 15);
+        glVertex2f(115, 65);
+        glVertex2f(0, 65);
+    glEnd();
+
+    // Front cabin
+    glColor3f(0.90f, 0.90f, 0.88f);
+    glBegin(GL_POLYGON);
+        glVertex2f(115, 15);
+        glVertex2f(145, 15);
+        glVertex2f(145, 50);
+        glVertex2f(132, 65);
+        glVertex2f(115, 65);
+    glEnd();
+
+    // Front window
+    glColor3f(0.20f, 0.42f, 0.55f);
+    glBegin(GL_QUADS);
+        glVertex2f(120, 48);
+        glVertex2f(132, 48);
+        glVertex2f(139, 38);
+        glVertex2f(120, 38);
+    glEnd();
+
+    // Side window
+    glBegin(GL_QUADS);
+        glVertex2f(98, 40);
+        glVertex2f(112, 40);
+        glVertex2f(112, 58);
+        glVertex2f(98, 58);
+    glEnd();
+
+    // Red side stripe
+    glColor3f(0.82f, 0.08f, 0.08f);
+    glBegin(GL_QUADS);
+        glVertex2f(0, 27);
+        glVertex2f(143, 27);
+        glVertex2f(143, 34);
+        glVertex2f(0, 34);
+    glEnd();
+
+    // Medical cross
+    glColor3f(0.85f, 0.05f, 0.05f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(43, 38);
+        glVertex2f(53, 38);
+        glVertex2f(53, 60);
+        glVertex2f(43, 60);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(36, 44);
+        glVertex2f(60, 44);
+        glVertex2f(60, 54);
+        glVertex2f(36, 54);
+    glEnd();
+
+    // Emergency light base
+    glColor3f(0.20f, 0.20f, 0.20f);
+    glBegin(GL_QUADS);
+        glVertex2f(65, 65);
+        glVertex2f(90, 65);
+        glVertex2f(90, 69);
+        glVertex2f(65, 69);
+    glEnd();
+
+    // Blinking emergency lights
+    if (ambulanceLight == 0)
+    {
+        // Red ON
+        glColor3f(1.0f, 0.05f, 0.05f);
+        glBegin(GL_QUADS);
+            glVertex2f(68, 69);
+            glVertex2f(76, 69);
+            glVertex2f(76, 76);
+            glVertex2f(68, 76);
+        glEnd();
+
+        // Blue DIM
+        glColor3f(0.05f, 0.10f, 0.30f);
+        glBegin(GL_QUADS);
+            glVertex2f(79, 69);
+            glVertex2f(87, 69);
+            glVertex2f(87, 76);
+            glVertex2f(79, 76);
+        glEnd();
+    }
+    else
+    {
+        // Red DIM
+        glColor3f(0.30f, 0.05f, 0.05f);
+        glBegin(GL_QUADS);
+            glVertex2f(68, 69);
+            glVertex2f(76, 69);
+            glVertex2f(76, 76);
+            glVertex2f(68, 76);
+        glEnd();
+
+        // Blue ON
+        glColor3f(0.05f, 0.30f, 1.0f);
+        glBegin(GL_QUADS);
+            glVertex2f(79, 69);
+            glVertex2f(87, 69);
+            glVertex2f(87, 76);
+            glVertex2f(79, 76);
+        glEnd();
+    }
+
+    // Wheels
+    glColor3f(0.08f, 0.08f, 0.08f);
+    drawCircle(30, 15, 14);
+    drawCircle(118, 15, 14);
+
+    // Wheel centers
+    glColor3f(0.55f, 0.55f, 0.55f);
+    drawCircle(30, 15, 6);
+    drawCircle(118, 15, 6);
+
+    // Front light
+    glColor3f(1.0f, 0.85f, 0.20f);
+    glBegin(GL_QUADS);
+        glVertex2f(140, 28);
+        glVertex2f(146, 28);
+        glVertex2f(146, 38);
+        glVertex2f(140, 38);
+    glEnd();
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_ENV_08
+// Object: Village Welcome Billboard
+// Created by: Ashik
+
+void drawVillageWelcomeBoard(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Two support poles
+    glColor3f(0.25f, 0.18f, 0.10f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(-65, 0);
+        glVertex2f(-57, 0);
+        glVertex2f(-57, 100);
+        glVertex2f(-65, 100);
+
+        glVertex2f(67, 0);
+        glVertex2f(75, 0);
+        glVertex2f(75, 100);
+        glVertex2f(67, 100);
+    glEnd();
+
+    // Main wooden board
+    glColor3f(0.45f, 0.25f, 0.10f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(-85, 70);
+        glVertex2f(95, 70);
+        glVertex2f(95, 150);
+        glVertex2f(-85, 150);
+    glEnd();
+
+    // Inner board
+    glColor3f(0.72f, 0.50f, 0.20f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(-78, 77);
+        glVertex2f(88, 77);
+        glVertex2f(88, 143);
+        glVertex2f(-78, 143);
+    glEnd();
+
+    // Welcome text
+    glColor3f(1.0f, 1.0f, 0.85f);
+    glRasterPos2f(-60, 118);
+
+    const char *text1 = "WELCOME TO";
+
+    for (int i = 0; text1[i] != '\0'; i++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text1[i]);
+
+    // Village text
+    glRasterPos2f(-52, 92);
+
+    const char *text2 = "VILLAGE";
+
+    for (int i = 0; text2[i] != '\0'; i++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text2[i]);
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_VILLAGE_14
+// Object: Traditional Bullock Cart
+// Created by: Shajia
+
+void drawBullockCart(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Cart body
+    glColor3f(0.48f, 0.27f, 0.10f);
+    glBegin(GL_QUADS);
+        glVertex2f(0, 30);
+        glVertex2f(115, 30);
+        glVertex2f(105, 68);
+        glVertex2f(10, 68);
+    glEnd();
+
+    // Wooden upper rails
+    glColor3f(0.62f, 0.38f, 0.16f);
+
+    glBegin(GL_LINES);
+        glVertex2f(10, 68);
+        glVertex2f(10, 92);
+
+        glVertex2f(35, 68);
+        glVertex2f(35, 92);
+
+        glVertex2f(60, 68);
+        glVertex2f(60, 92);
+
+        glVertex2f(85, 68);
+        glVertex2f(85, 92);
+
+        glVertex2f(105, 68);
+        glVertex2f(105, 92);
+
+        glVertex2f(8, 88);
+        glVertex2f(108, 88);
+    glEnd();
+
+    // Wheels
+    glColor3f(0.18f, 0.12f, 0.07f);
+    drawCircle(25, 25, 23);
+    drawCircle(90, 25, 23);
+
+    // Wheel centers
+    glColor3f(0.72f, 0.48f, 0.20f);
+    drawCircle(25, 25, 7);
+    drawCircle(90, 25, 7);
+
+    // Wheel spokes
+    glColor3f(0.72f, 0.48f, 0.20f);
+    glBegin(GL_LINES);
+
+        glVertex2f(25, 3);
+        glVertex2f(25, 47);
+        glVertex2f(3, 25);
+        glVertex2f(47, 25);
+
+        glVertex2f(10, 10);
+        glVertex2f(40, 40);
+        glVertex2f(10, 40);
+        glVertex2f(40, 10);
+
+        glVertex2f(90, 3);
+        glVertex2f(90, 47);
+        glVertex2f(68, 25);
+        glVertex2f(112, 25);
+
+        glVertex2f(75, 10);
+        glVertex2f(105, 40);
+        glVertex2f(75, 40);
+        glVertex2f(105, 10);
+
+    glEnd();
+
+    // Long wooden shaft
+    glColor3f(0.48f, 0.27f, 0.10f);
+    glLineWidth(5.0f);
+
+    glBegin(GL_LINES);
+        glVertex2f(108, 48);
+        glVertex2f(190, 38);
+
+        glVertex2f(108, 40);
+        glVertex2f(190, 30);
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    // Small hay inside cart
+    glColor3f(0.82f, 0.62f, 0.18f);
+
+    glBegin(GL_TRIANGLES);
+        glVertex2f(20, 68);
+        glVertex2f(45, 105);
+        glVertex2f(65, 68);
+
+        glVertex2f(50, 68);
+        glVertex2f(75, 110);
+        glVertex2f(98, 68);
+    glEnd();
+
+    glPopMatrix();
+}
+// OBJECT ID: OBJ_VILLAGE_15
+// Object: Traditional Village Tea Stall
+// Created by: Rony
+
+void drawVillageTeaStall(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Main wall
+    glColor3f(0.58f, 0.38f, 0.18f);
+    glBegin(GL_QUADS);
+        glVertex2f(0, 0);
+        glVertex2f(130, 0);
+        glVertex2f(130, 85);
+        glVertex2f(0, 85);
+    glEnd();
+
+    // Tin roof
+    glColor3f(0.35f, 0.38f, 0.38f);
+    glBegin(GL_POLYGON);
+        glVertex2f(-15, 85);
+        glVertex2f(145, 85);
+        glVertex2f(125, 115);
+        glVertex2f(5, 115);
+    glEnd();
+
+    // Roof lines
+    glColor3f(0.20f, 0.22f, 0.22f);
+    glBegin(GL_LINES);
+        glVertex2f(10, 88);
+        glVertex2f(25, 112);
+
+        glVertex2f(40, 88);
+        glVertex2f(50, 112);
+
+        glVertex2f(70, 88);
+        glVertex2f(75, 112);
+
+        glVertex2f(100, 88);
+        glVertex2f(100, 112);
+
+        glVertex2f(130, 88);
+        glVertex2f(125, 110);
+    glEnd();
+
+    // Front opening
+    glColor3f(0.20f, 0.14f, 0.08f);
+    glBegin(GL_QUADS);
+        glVertex2f(15, 18);
+        glVertex2f(82, 18);
+        glVertex2f(82, 72);
+        glVertex2f(15, 72);
+    glEnd();
+
+    // Counter
+    glColor3f(0.72f, 0.45f, 0.18f);
+    glBegin(GL_QUADS);
+        glVertex2f(8, 16);
+        glVertex2f(92, 16);
+        glVertex2f(92, 28);
+        glVertex2f(8, 28);
+    glEnd();
+
+    // Door
+    glColor3f(0.34f, 0.20f, 0.10f);
+    glBegin(GL_QUADS);
+        glVertex2f(98, 0);
+        glVertex2f(123, 0);
+        glVertex2f(123, 62);
+        glVertex2f(98, 62);
+    glEnd();
+
+    // Tea sign board
+    glColor3f(0.15f, 0.42f, 0.18f);
+    glBegin(GL_QUADS);
+        glVertex2f(25, 78);
+        glVertex2f(105, 78);
+        glVertex2f(105, 98);
+        glVertex2f(25, 98);
+    glEnd();
+
+    glColor3f(1.0f, 1.0f, 0.85f);
+    glRasterPos2f(46, 84);
+
+    const char *text = "TEA STALL";
+
+    for (int i = 0; text[i] != '\0'; i++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
+
+    // Tea cups on counter
+    glColor3f(0.92f, 0.90f, 0.80f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(30, 28);
+        glVertex2f(40, 28);
+        glVertex2f(39, 38);
+        glVertex2f(31, 38);
+
+        glVertex2f(52, 28);
+        glVertex2f(62, 28);
+        glVertex2f(61, 38);
+        glVertex2f(53, 38);
+    glEnd();
+
+    // Small bench
+    glColor3f(0.48f, 0.27f, 0.10f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(-10, -2);
+        glVertex2f(55, -2);
+        glVertex2f(55, 6);
+        glVertex2f(-10, 6);
+
+        glVertex2f(0, -15);
+        glVertex2f(6, -15);
+        glVertex2f(6, -2);
+        glVertex2f(0, -2);
+
+        glVertex2f(42, -15);
+        glVertex2f(48, -15);
+        glVertex2f(48, -2);
+        glVertex2f(42, -2);
+    glEnd();
+
+    glPopMatrix();
+}
+
+// OBJECT ID: OBJ_ENV_09
+// Object: Covered Wooden Transition Bridge
+// Created by: Mostafiz
+
+void drawBridgeCanopy()
+{
+    // Left front pillar
+    glColor3f(0.34f, 0.20f, 0.09f);
+    glBegin(GL_QUADS);
+        glVertex2f(705, 60);
+        glVertex2f(716, 60);
+        glVertex2f(716, 210);
+        glVertex2f(705, 210);
+    glEnd();
+
+    // Middle pillar
+    glBegin(GL_QUADS);
+        glVertex2f(795, 60);
+        glVertex2f(806, 60);
+        glVertex2f(806, 210);
+        glVertex2f(795, 210);
+    glEnd();
+
+    // Right pillar
+    glBegin(GL_QUADS);
+        glVertex2f(884, 60);
+        glVertex2f(895, 60);
+        glVertex2f(895, 210);
+        glVertex2f(884, 210);
+    glEnd();
+
+    // Top horizontal wooden beam
+    glColor3f(0.42f, 0.25f, 0.10f);
+    glBegin(GL_QUADS);
+        glVertex2f(695, 198);
+        glVertex2f(905, 198);
+        glVertex2f(905, 214);
+        glVertex2f(695, 214);
+    glEnd();
+
+    // Main sloping roof
+    glColor3f(0.50f, 0.28f, 0.10f);
+    glBegin(GL_POLYGON);
+        glVertex2f(680, 210);
+        glVertex2f(920, 210);
+        glVertex2f(885, 255);
+        glVertex2f(715, 255);
+    glEnd();
+
+    // Dark roof edge
+    glColor3f(0.27f, 0.15f, 0.07f);
+    glBegin(GL_QUADS);
+        glVertex2f(680, 208);
+        glVertex2f(920, 208);
+        glVertex2f(915, 218);
+        glVertex2f(685, 218);
+    glEnd();
+
+    // Roof detail lines
+    glColor3f(0.30f, 0.17f, 0.07f);
+    glBegin(GL_LINES);
+        glVertex2f(715, 215);
+        glVertex2f(740, 252);
+
+        glVertex2f(750, 215);
+        glVertex2f(765, 252);
+
+        glVertex2f(785, 215);
+        glVertex2f(792, 252);
+
+        glVertex2f(820, 215);
+        glVertex2f(820, 252);
+
+        glVertex2f(855, 215);
+        glVertex2f(848, 252);
+
+        glVertex2f(890, 215);
+        glVertex2f(875, 252);
+    glEnd();
+
+    // Small sign board
+    glColor3f(0.28f, 0.16f, 0.07f);
+    glBegin(GL_QUADS);
+        glVertex2f(748, 220);
+        glVertex2f(852, 220);
+        glVertex2f(852, 242);
+        glVertex2f(748, 242);
+    glEnd();
+
+    // Sign text
+    glColor3f(1.0f, 0.88f, 0.55f);
+    glRasterPos2f(765, 227);
+
+    const char *text = "TWO WORLDS";
+
+    for (int i = 0; text[i] != '\0'; i++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
+}
+// OBJECT ID: OBJ_ENV_10
+// Object: Bridge Lower White Railing
+// Created by: Mostafiz
+
+void drawBridgeLowerRailing()
+{
+    glColor3f(0.88f, 0.88f, 0.85f);
+
+    // Railing posts
+    for (int x = 710; x <= 890; x += 30)
+    {
+        glBegin(GL_QUADS);
+
+            glVertex2f(x, 68);
+            glVertex2f(x + 4, 68);
+            glVertex2f(x + 4, 92);
+            glVertex2f(x, 92);
+
+        glEnd();
+    }
+
+    // Horizontal railing
+    glBegin(GL_QUADS);
+
+        glVertex2f(705, 88);
+        glVertex2f(895, 88);
+        glVertex2f(895, 94);
+        glVertex2f(705, 94);
+
+    glEnd();
+}
+
+// OBJECT ID: OBJ_VILLAGE_17
+// Object: Village Van with Driver
+// Created by: Shajia
+
+void drawVillageVanDriver(float x, float y, float s)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(s, s, 1);
+
+    // Van platform
+    glColor3f(0.58f, 0.34f, 0.14f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(0, 28);
+        glVertex2f(115, 28);
+        glVertex2f(115, 45);
+        glVertex2f(0, 45);
+    glEnd();
+
+    // Wooden side frame
+    glColor3f(0.72f, 0.48f, 0.20f);
+
+    glBegin(GL_LINES);
+        glVertex2f(5, 45);
+        glVertex2f(5, 68);
+
+        glVertex2f(30, 45);
+        glVertex2f(30, 68);
+
+        glVertex2f(55, 45);
+        glVertex2f(55, 68);
+
+        glVertex2f(80, 45);
+        glVertex2f(80, 68);
+
+        glVertex2f(100, 45);
+        glVertex2f(100, 68);
+
+        glVertex2f(5, 66);
+        glVertex2f(100, 66);
+    glEnd();
+
+    // Back wheel
+    glColor3f(0.12f, 0.12f, 0.12f);
+    drawCircle(20, 22, 20);
+
+    glColor3f(0.70f, 0.70f, 0.70f);
+    drawCircle(20, 22, 14);
+
+    glColor3f(0.15f, 0.15f, 0.15f);
+    drawCircle(20, 22, 4);
+
+    // Front wheel
+    glColor3f(0.12f, 0.12f, 0.12f);
+    drawCircle(105, 22, 20);
+
+    glColor3f(0.70f, 0.70f, 0.70f);
+    drawCircle(105, 22, 14);
+
+    glColor3f(0.15f, 0.15f, 0.15f);
+    drawCircle(105, 22, 4);
+
+    // Driver seat
+    glColor3f(0.30f, 0.20f, 0.12f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(102, 45);
+        glVertex2f(128, 45);
+        glVertex2f(128, 52);
+        glVertex2f(102, 52);
+    glEnd();
+
+    // Driver body
+    glColor3f(0.18f, 0.45f, 0.70f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(108, 52);
+        glVertex2f(121, 52);
+        glVertex2f(121, 78);
+        glVertex2f(108, 78);
+    glEnd();
+
+    // Driver head
+    glColor3f(0.82f, 0.62f, 0.44f);
+    drawCircle(115, 87, 8);
+
+    // Hair
+    glColor3f(0.12f, 0.08f, 0.05f);
+
+    glBegin(GL_POLYGON);
+        glVertex2f(108, 88);
+        glVertex2f(110, 95);
+        glVertex2f(116, 97);
+        glVertex2f(122, 93);
+        glVertex2f(122, 88);
+    glEnd();
+
+    // Driver legs
+    glColor3f(0.18f, 0.18f, 0.20f);
+    glLineWidth(3.0f);
+
+    glBegin(GL_LINES);
+        glVertex2f(111, 53);
+        glVertex2f(103, 37);
+
+        glVertex2f(118, 53);
+        glVertex2f(109, 37);
+    glEnd();
+
+    // Driver arm
+    glColor3f(0.82f, 0.62f, 0.44f);
+
+    glBegin(GL_LINES);
+        glVertex2f(119, 70);
+        glVertex2f(138, 61);
+    glEnd();
+
+    // Van handle
+    glColor3f(0.15f, 0.15f, 0.15f);
+
+    glBegin(GL_LINES);
+        glVertex2f(138, 61);
+        glVertex2f(148, 72);
+
+        glVertex2f(140, 72);
+        glVertex2f(154, 72);
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    glPopMatrix();
+}
+
+// FUNCTION ID: FUNC_TRANS_01
+// Function: Two Worlds Vehicle Transformation
+// Created by: Apon
+
+void drawWorldTransitionVehicle()
+{
+    float vanX = 900 + worldTransitionMove;
+
+    drawVillageVanDriver(vanX, 100, 0.72f);
+}
+
+// SUPPORTING FUNCTION
+// Function: Reverse City Car
+// Created by: Apon
+
+void drawReverseCityCar(float x, float y, float s)
+{
+    glPushMatrix();
+
+    glTranslatef(2 * x, 0, 0);
+    glScalef(-1.0f, 1.0f, 1.0f);
+
+    drawCityCar(x, y, s);
+
+    glPopMatrix();
+}
+
+// FUNCTION ID: FUNC_ANIM_14
+// Function: Reverse City Car Movement
+// Created by: Apon
+
+void updateReverseCar(int value)
+{
+    reverseCarMove += 2.2f;
+
+    if (reverseCarMove > 900.0f)
+        reverseCarMove = 0.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateReverseCar, 0);
+}
+
+// FUNCTION ID: FUNC_ANIM_15
+// Function: Bidirectional Pedestrian Movement
+// Created by: Mostafiz
+
+void updatePedestrian(int value)
+{
+    pedestrianMove += 1.0f;
+
+    if (pedestrianMove > 1800.0f)
+        pedestrianMove = -700.0f;
+
+    cityPersonLeft1 -= 0.9f;
+    cityPersonLeft2 -= 0.7f;
+
+    if (cityPersonLeft1 < -30.0f)
+        cityPersonLeft1 = 700.0f;
+
+    if (cityPersonLeft2 < -30.0f)
+        cityPersonLeft2 = 700.0f;
+
+    villagePersonLeft1 -= 0.8f;
+    villagePersonLeft2 -= 1.0f;
+
+    if (villagePersonLeft1 < 920.0f)
+        villagePersonLeft1 = 1600.0f;
+
+    if (villagePersonLeft2 < 920.0f)
+        villagePersonLeft2 = 1600.0f;
+
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updatePedestrian, 0);
+}
+
+// OBJECT ID: OBJ_ENV_10
+// Object: Walking Pedestrian with Rain Umbrella
+// Created by: Mostafiz
+
+void drawWalkingPerson(float x, float y, float s)
+{
+    // Head
+    glColor3f(0.95f, 0.75f, 0.55f);
+    drawCircle(x, y + 42 * s, 7 * s);
+
+    // Hair
+    glColor3f(0.12f, 0.08f, 0.05f);
+    glBegin(GL_POLYGON);
+        glVertex2f(x - 7 * s, y + 44 * s);
+        glVertex2f(x - 5 * s, y + 50 * s);
+        glVertex2f(x + 5 * s, y + 50 * s);
+        glVertex2f(x + 7 * s, y + 44 * s);
+    glEnd();
+
+    // Body / shirt
+    glColor3f(0.18f, 0.38f, 0.75f);
+    glBegin(GL_QUADS);
+        glVertex2f(x - 6 * s, y + 18 * s);
+        glVertex2f(x + 6 * s, y + 18 * s);
+        glVertex2f(x + 6 * s, y + 37 * s);
+        glVertex2f(x - 6 * s, y + 37 * s);
+    glEnd();
+
+    // Arms
+    glColor3f(0.95f, 0.75f, 0.55f);
+    glLineWidth(3.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(x - 5 * s, y + 32 * s);
+        glVertex2f(x - 13 * s, y + 21 * s);
+
+        glVertex2f(x + 5 * s, y + 32 * s);
+        glVertex2f(x + 13 * s, y + 23 * s);
+
+    glEnd();
+
+    // Pants
+    glColor3f(0.10f, 0.12f, 0.18f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(x - 6 * s, y + 18 * s);
+        glVertex2f(x + 6 * s, y + 18 * s);
+        glVertex2f(x + 5 * s, y + 12 * s);
+        glVertex2f(x - 5 * s, y + 12 * s);
+    glEnd();
+
+    // Legs - slightly different position gives walking pose
+    glLineWidth(4.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(x - 3 * s, y + 13 * s);
+        glVertex2f(x - 9 * s, y);
+
+        glVertex2f(x + 3 * s, y + 13 * s);
+        glVertex2f(x + 9 * s, y + 3 * s);
+
+    glEnd();
+
+    // Shoes
+    glColor3f(0.05f, 0.05f, 0.05f);
+    glLineWidth(3.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(x - 9 * s, y);
+        glVertex2f(x - 14 * s, y);
+
+        glVertex2f(x + 9 * s, y + 3 * s);
+        glVertex2f(x + 14 * s, y + 3 * s);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+
+    if (sceneMode == 3)
+    {
+        // Umbrella upper canopy
+        glColor3f(0.55f, 0.12f, 0.20f);
+
+        glBegin(GL_TRIANGLE_FAN);
+
+            // Center/bottom point
+            glVertex2f(x, y + 58 * s);
+
+            // Upper semicircle
+            for (int i = 0; i <= 180; i += 10)
+            {
+                float angle = i * 3.1416f / 180.0f;
+
+                glVertex2f(
+                    x + cos(angle) * 24 * s,
+                    y + 58 * s + sin(angle) * 14 * s
+                );
+            }
+
+        glEnd();
+
+
+        // Umbrella center stick
+        glColor3f(0.15f, 0.15f, 0.15f);
+        glLineWidth(2.0f);
+
+        glBegin(GL_LINES);
+
+            glVertex2f(x, y + 58 * s);
+            glVertex2f(x, y + 25 * s);
+
+        glEnd();
+
+
+        // Umbrella handle
+        glBegin(GL_LINES);
+
+            glVertex2f(x, y + 25 * s);
+            glVertex2f(x + 5 * s, y + 21 * s);
+
+        glEnd();
+
+        glLineWidth(1.0f);
+    }
+}
+
+
+// OBJECT ID: OBJ_CITY_14
+// Object: City Background Trees and Bushes
+// Created by: Shajia
+
+void drawCityBackgroundTree(float x, float y, float s)
+{
+    // Trunk
+    glColor3f(0.30f, 0.18f, 0.08f);
+    glBegin(GL_QUADS);
+        glVertex2f(x - 5*s, y);
+        glVertex2f(x + 5*s, y);
+        glVertex2f(x + 5*s, y + 55*s);
+        glVertex2f(x - 5*s, y + 55*s);
+    glEnd();
+
+    // Dark leaves
+    glColor3f(0.08f, 0.35f, 0.10f);
+    drawCircle(x, y + 75*s, 24*s);
+
+    // Left leaves
+    glColor3f(0.12f, 0.45f, 0.12f);
+    drawCircle(x - 18*s, y + 68*s, 18*s);
+
+    // Right leaves
+    drawCircle(x + 18*s, y + 68*s, 18*s);
+
+    // Top leaves
+    glColor3f(0.18f, 0.52f, 0.16f);
+    drawCircle(x, y + 92*s, 18*s);
+}
+
+void drawCityBackgroundBush(float x, float y, float s)
+{
+    glColor3f(0.06f, 0.30f, 0.08f);
+
+    drawCircle(x, y, 12*s);
+    drawCircle(x + 14*s, y + 3*s, 14*s);
+    drawCircle(x + 28*s, y, 12*s);
+
+    glColor3f(0.12f, 0.42f, 0.10f);
+
+    drawCircle(x + 8*s, y + 8*s, 8*s);
+    drawCircle(x + 22*s, y + 8*s, 8*s);
+}
+
+// OBJECT ID: OBJ_VILLAGE_GREENERY
+// Object: Natural Village Roadside Greenery
+// Created by: Rony
+
+void drawVillageGrass(float x, float y, float s)
+{
+    glColor3f(0.12f, 0.38f, 0.08f);
+    glLineWidth(2.0f);
+
+    glBegin(GL_LINES);
+
+        glVertex2f(x, y);
+        glVertex2f(x - 4*s, y + 12*s);
+
+        glVertex2f(x + 3*s, y);
+        glVertex2f(x + 3*s, y + 16*s);
+
+        glVertex2f(x + 6*s, y);
+        glVertex2f(x + 11*s, y + 11*s);
+
+        glVertex2f(x + 10*s, y);
+        glVertex2f(x + 15*s, y + 15*s);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+
+void drawVillageLowShrub(float x, float y, float s)
+{
+    glColor3f(0.08f, 0.32f, 0.07f);
+    drawCircle(x, y + 4*s, 7*s);
+    drawCircle(x + 9*s, y + 6*s, 9*s);
+    drawCircle(x + 18*s, y + 4*s, 7*s);
+
+    glColor3f(0.16f, 0.46f, 0.10f);
+    drawCircle(x + 5*s, y + 8*s, 5*s);
+    drawCircle(x + 14*s, y + 9*s, 5*s);
+}
+
+// OBJECT ID: OBJ_RIVER_03
+// Object: Moving River Ripples
+// Created by: Shajia
+
+void drawRiverRipples()
+{
+    glColor3f(0.72f, 0.88f, 0.95f);
+    glLineWidth(2.0f);
+
+    float r = rippleMove;
+
+    glBegin(GL_LINES);
+
+        // Ripple 1
+        glVertex2f(80 + r, -95);
+        glVertex2f(125 + r, -95);
+
+        // Ripple 2
+        glVertex2f(260 + r, -145);
+        glVertex2f(315 + r, -145);
+
+        // Ripple 3
+        glVertex2f(470 + r, -110);
+        glVertex2f(520 + r, -110);
+
+        // Ripple 4
+        glVertex2f(690 + r, -165);
+        glVertex2f(750 + r, -165);
+
+        // Ripple 5
+        glVertex2f(920 + r, -105);
+        glVertex2f(970 + r, -105);
+
+        // Ripple 6
+        glVertex2f(1130 + r, -150);
+        glVertex2f(1190 + r, -150);
+
+        // Ripple 7
+        glVertex2f(1360 + r, -115);
+        glVertex2f(1415 + r, -115);
+
+    glEnd();
+
+    glLineWidth(1.0f);
+}
+// FUNCTION ID: FUNC_ANIM_16
+// Function: River Ripple Movement
+// Created by: Shajia
+
+void updateRiverRipple(int value)
+{
+    rippleMove += 0.6f;
+
+    if (rippleMove > 180.0f)
+        rippleMove = -180.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(30, updateRiverRipple, 0);
+}
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Background
     drawSky();
     drawStars();
 
-    // Heavy rain in background
     drawBackgroundRain();
+    drawAirplane(400 + airplaneMove , 600, 0.85f);
+    drawBirds();
 
+    drawCloud((250 + cloudMove > 1700) ? 250 + cloudMove - 1900 : 250 + cloudMove, 600);
+
+    drawCloud((520 + cloudMove > 1700) ? 520 + cloudMove - 1900 : 520 + cloudMove, 550);
+
+    drawCloud((1050 + cloudMove > 1700) ? 1050 + cloudMove - 1900 : 1050 + cloudMove, 600);
+
+    drawCloud((1400 + cloudMove > 1700) ? 1400 + cloudMove - 1900 : 1400 + cloudMove, 550);
     drawGround();
 
-    // Background scenery
     drawDistantCity();
+    drawRiverSideHills();
     drawVillageHills();
     drawVillageBackgroundTrees();
     drawVillagePineTrees();
+    drawAdditionalVillageTrees();
 
-    // Shajia village environment
+    drawBananaTree(780, 250, 0.70f);
+    drawBananaTree(850, 250, 0.90f);
+    drawBananaTree(820, 250, 0.40f);
+    drawBananaTree(870, 250, 0.40f);
+
+    drawVegetableGarden(780, 200, 0.70f);
+
     drawPaddyField();
     drawBambooFence();
 
-
     drawLargeVillageTrees();
 
-    // Foreground village object
-    drawHayStack();
+    drawHayStack(1500);
+    drawSmallHayStack(1300, 250, 0.85f);
+    drawSmallHayStack(1345, 250, 0.65f);
 
     drawWindmill();
+    drawSmallHayStack(1110, 250, 0.85f);
+    drawSmallHayStack(1145, 250, 0.65f);
 
+    drawWoodenVillageHouse();
+    drawAnimalFarm();
+    drawFarmChickens();
     drawMudHouse();
     drawTinHouse();
 
 
+    drawVillageGrass(925, 176, 0.70f);
+    drawVillageGrass(970, 177, 0.55f);
+
+    drawVillageLowShrub(1010, 177, 0.60f);
+
+    drawVillageGrass(1070, 176, 0.65f);
+    drawVillageGrass(1110, 178, 0.50f);
+
+    drawVillageLowShrub(1160, 177, 0.55f);
+
+    drawVillageGrass(1220, 176, 0.70f);
+    drawVillageGrass(1270, 177, 0.55f);
+
+    drawVillageLowShrub(1320, 177, 0.60f);
+
+    drawVillageGrass(1390, 176, 0.65f);
+    drawVillageGrass(1440, 178, 0.55f);
+
+    drawVillageLowShrub(1490, 177, 0.55f);
+
+    drawVillageGrass(1550, 176, 0.65f);
+
+    drawWalkingPerson(700 + pedestrianMove, 185, 0.72f);
+    drawWalkingPerson(800 + pedestrianMove, 185, 0.68f);
+    drawWalkingPerson(1200 + pedestrianMove, 185, 0.90f);
+    drawWalkingPerson(950 + pedestrianMove*1.5, 185, 0.69f);
+    drawWalkingPerson(1550 + pedestrianMove, 185, 0.77f);
+
     drawVillageCows();
 
-    // River
     drawRiver();
     drawRiverDetails();
+    drawRiverRipples();
 
-    // City Foundation
     drawCityBase();
+
     drawCitySidewalk();
     drawCityHighway();
     drawRoadBorder();
     drawRoadMarkings();
 
-    // City Park
-    drawCityPark();
+    drawCityBackgroundTree(20, 205, 0.95f);
+    drawCityBackgroundTree(110, 205, 1.00f);
+    drawCityBackgroundTree(230, 205, 0.90f);
+    drawCityBackgroundTree(320, 205, 1.05f);
+    drawCityBackgroundTree(430, 205, 0.92f);
+    drawCityBackgroundTree(520, 205, 1.00f);
+    drawCityBackgroundTree(620, 205, 0.95f);
 
-    // City Objects
+    drawCityBackgroundBush(5, 210, 0.85f);
+    drawCityBackgroundBush(75, 210, 0.90f);
+    drawCityBackgroundBush(150, 210, 0.80f);
+    drawCityBackgroundBush(235, 210, 0.88f);
+    drawCityBackgroundBush(320, 210, 0.82f);
+    drawCityBackgroundBush(405, 210, 0.90f);
+    drawCityBackgroundBush(490, 210, 0.84f);
+    drawCityBackgroundBush(575, 210, 0.88f);
+    drawCityBackgroundBush(650, 210, 0.80f);
+
     drawAIUBBuilding();
     drawHighRiseBuilding();
     drawFoodCourt();
     drawHospital();
 
-
-    // City Infrastructure
     drawTrafficSignal();
     drawZebraCrossing();
+
+    drawWalkingPerson(cityPersonLeft1, 40, 0.72f);
+    drawWalkingPerson(cityPersonLeft2, 40, 0.78f);
+    drawWalkingPerson(cityPersonLeft1-500, 40, 0.52f);
+    drawWalkingPerson(cityPersonLeft1-520, 40, 0.92f);
+    drawWalkingPerson(100+ cityPersonLeft2, 40, 0.98f);
+
     drawStreetLights();
 
-    // River decoration
     drawRiverSideBushes();
 
-    // Connection
+    drawWalkingPerson(-100 + pedestrianMove*1.5, 185, 0.75f);
+    drawWalkingPerson(350 + pedestrianMove*1.1, 185, 0.68f);
+    drawWalkingPerson(-200 + pedestrianMove*1.4, 185, 0.72f);
+    drawWalkingPerson(50 + pedestrianMove, 185, 0.72f);
+    drawWalkingPerson(200 + pedestrianMove*1.7, 185, 0.72f);
+    drawWalkingPerson(-350 + pedestrianMove*1.1, 185, 0.68f);
+
+    drawCityPark();
     drawBridge();
     drawVillageEntryRoad();
 
-    drawCityCar(100 + carMove, 110, 0.75f);
-    drawCityCar(420 + carMove, 82, 0.65f);
-    drawCityCar(760 + carMove, 110, 0.72f);
+    drawVillageGrass(940, 65, 0.50f);
+    drawVillageGrass(1090, 64, 0.45f);
+    drawVillageGrass(1240, 65, 0.55f);
+    drawVillageGrass(1400, 64, 0.48f);
+    drawVillageGrass(1540, 65, 0.50f);
+
+    drawWorldTransitionVehicle();
+
+    drawAmbulance(560, 165, 0.70f);
+
+    float reverse1 = 850 - reverseCarMove;
+    if (reverse1 > -100)
+        drawReverseCityCar(reverse1, 142, 0.70f);
+
+    float reverse2 = 550 - reverseCarMove;
+    if (reverse2 > -100)
+        drawReverseCityCar(reverse2, 142, 0.70f);
+
+    float car1X = 100 + carMove;
+    float car2X = 420 + carMove;
+    float car3X = 760 + carMove;
+
+    if (car1X < 850)
+        drawCityCar(car1X, 110, 0.75f);
+
+    if (car2X < 840)
+        drawCityCar(car2X, 82, 0.65f);
+
+    if (car3X < 850)
+        drawCityCar(car3X, 110, 0.72f);
 
     drawCityBus(-180 + busMove, 82, 0.75f);
+    drawBridgeLowerRailing();
+    drawBridgeCanopy();
+
 
     drawBusStop();
 
@@ -3732,21 +5917,38 @@ void display()
     {
         drawMoon();
     }
+    drawVillageWelcomeBoard(980, 70, 0.90f);
 
-    drawCloud((250 + cloudMove > 1700) ? 250 + cloudMove - 1900 : 250 + cloudMove, 600);
+    drawWalkingPerson(villagePersonLeft1, 55, 0.72f);
+    drawWalkingPerson(1420, 55, 0.92f);
+    drawWalkingPerson(villagePersonLeft2, 55, 0.87f);
 
-    drawCloud((520 + cloudMove > 1700) ? 520 + cloudMove - 1900 : 520 + cloudMove, 550);
+    drawWalkingPerson(130+villagePersonLeft1, 55, 0.72f);
+    drawWalkingPerson(250+villagePersonLeft2, 55, 0.97f);
 
-    drawCloud((1050 + cloudMove > 1700) ? 1050 + cloudMove - 1900 : 1050 + cloudMove, 600);
+    drawVillageTeaStall(1450, 60, 0.85f);
+    drawBullockCart(1220, 165, 0.75f);
 
-    drawCloud((1400 + cloudMove > 1700) ? 1400 + cloudMove - 1900 : 1400 + cloudMove, 550);
+    drawRiverBankDecoration(180, -70, 0.80f);
+    drawRiverBankDecoration(80, -70, 0.80f);
+    drawRiverBankDecoration(250, -70, 0.90f);
+    drawRiverBankDecoration(700, -70, 0.70f);
+    drawRiverBankDecoration(750, -70, 0.50f);
+    drawRiverBankDecoration(920, -70, 0.85f);
+    drawRiverBankDecoration(905, -70, 0.75f);
+    drawRiverBankDecoration(1250, -70, 0.85f);
+    drawRiverBankDecoration(1300, -70, 0.50f);
+    drawRiverBankDecoration(1500, -70, 0.85f);
+    drawRiverBankDecoration(1540, -70, 0.40f);
 
-    // Light rain in foreground
+    drawWoodenBoat(480 + boatMove, -130, 0.85f);
+    drawWoodenBoat(650 + boatMove * 1.5f, -90, 0.85f);
+    drawWoodenBoat(250 + boatMove* 2.5f, -170, 0.85f);
+
     drawForegroundRain();
 
     glFlush();
 }
-
 
 // INITIALIZATION
 
@@ -3786,6 +5988,17 @@ int main(int argc, char** argv)
     glutTimerFunc(50, updateCow, 0);
     glutTimerFunc(30, updateCar, 0);
     glutTimerFunc(30, updateBus, 0);
+    glutTimerFunc(3000, updateTrafficSignal, 0);
+    glutTimerFunc(40, updatePaddy, 0);
+    glutTimerFunc(40, updatePaddy, 0);
+    glutTimerFunc(30, updateBoat, 0);
+    glutTimerFunc(30, updateBirds, 0);
+    glutTimerFunc(30, updateAirplane, 0);
+    glutTimerFunc(400, updateAmbulanceLight, 0);
+    glutTimerFunc(30, updateWorldTransition, 0);
+    glutTimerFunc(30, updateReverseCar, 0);
+    glutTimerFunc(30, updatePedestrian, 0);
+    glutTimerFunc(30, updateRiverRipple, 0);
 
     glutMainLoop();
 
